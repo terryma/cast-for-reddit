@@ -33,12 +33,18 @@ limitations under the License.
 	    font-family:Verdana, Geneva, sans-serif;
 	    font-size:40px;
 	}
+        #image {
+          background: no-repeat center center fixed;
+          background-size: cover;
+        }
     </style>
     <title>Cast Hello Text</title>
   </head>
   <body>
-	<DIV id="message">Talk to me</DIV>
+	<!-- <DIV id="message">Talk to me</DIV> -->
+        <div id="image"></div>
     <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
+    <script type="text/javascript" src="//rawgit.com/trevorsenior/snoocore/2.7.0/dist/Snoocore-standalone.js"></script>
     <script type="text/javascript">
       window.onload = function() {
         cast.receiver.logger.setLevelValue(0);
@@ -97,6 +103,23 @@ limitations under the License.
         document.getElementById("message").innerHTML=text;
         window.castReceiverManager.setApplicationState(text);
       };
+
+      function showImage(url) {
+        document.getElementById("image").style.backgroundImage = "url("+url+")";
+      }
+
+      var reddit = new window.Snoocore({
+          userAgent: 'reddit-cast by terryma'
+      });
+      reddit('/r/earthporn/hot').listing({
+          limit: 10
+      }).then(function(slice) {
+        console.log("got here!!!");
+        console.log(slice.children);
+        console.log(slice.before);
+        console.log(slice.after);
+        showImage(slice.children[0].data.url);
+      });
     </script>
   </body>
 </html>
