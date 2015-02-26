@@ -1,0 +1,3 @@
+[submodule "vegas"]
+	path = vegas
+	url = https://github.com/jaysalvat/vegas

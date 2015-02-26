@@ -38,11 +38,14 @@ limitations under the License.
           background-size: cover;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="vegas/dist/jquery.vegas.css" />
     <title>Cast Hello Text</title>
   </head>
   <body>
 	<!-- <DIV id="message">Talk to me</DIV> -->
         <div id="image"></div>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type="text/javascript" src="vegas/dist/jquery.vegas.js"></script>
     <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
     <script type="text/javascript" src="//rawgit.com/trevorsenior/snoocore/2.7.0/dist/Snoocore-standalone.js"></script>
     <script type="text/javascript">
@@ -118,7 +121,16 @@ limitations under the License.
         console.log(slice.children);
         console.log(slice.before);
         console.log(slice.after);
-        showImage(slice.children[0].data.url);
+        // showImage(slice.children[0].data.url);
+        $.vegas('slideshow', {
+          delay:5000,
+          backgrounds: [
+            { src:slice.children[0].data.url, fade:1000 },
+            { src:slice.children[1].data.url, fade:1000 },
+            { src:slice.children[2].data.url, fade:1000 },
+            { src:slice.children[3].data.url, fade:1000 }
+          ]
+        });
       });
     </script>
   </body>
