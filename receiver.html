@@ -38,14 +38,14 @@ limitations under the License.
           background-size: cover;
         }
     </style>
-    <link rel="stylesheet" type="text/css" href="vegas/dist/jquery.vegas.css" />
+    <link rel="stylesheet" type="text/css" href="vegas/dist/vegas.min.css" />
     <title>Cast Hello Text</title>
   </head>
   <body>
 	<!-- <DIV id="message">Talk to me</DIV> -->
         <div id="image"></div>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script type="text/javascript" src="vegas/dist/jquery.vegas.js"></script>
+    <script type="text/javascript" src="vegas/dist/vegas.min.js"></script>
     <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
     <script type="text/javascript" src="//rawgit.com/trevorsenior/snoocore/2.7.0/dist/Snoocore-standalone.js"></script>
     <script type="text/javascript">
@@ -53,27 +53,27 @@ limitations under the License.
         cast.receiver.logger.setLevelValue(0);
         window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
         console.log('Starting Receiver Manager');
-        
+
         // handler for the 'ready' event
         castReceiverManager.onReady = function(event) {
           console.log('Received Ready event: ' + JSON.stringify(event.data));
           window.castReceiverManager.setApplicationState("Application status is ready...");
         };
-        
+
         // handler for 'senderconnected' event
         castReceiverManager.onSenderConnected = function(event) {
           console.log('Received Sender Connected event: ' + event.data);
           console.log(window.castReceiverManager.getSender(event.data).userAgent);
         };
-        
+
         // handler for 'senderdisconnected' event
         castReceiverManager.onSenderDisconnected = function(event) {
           console.log('Received Sender Disconnected event: ' + event.data);
           if (window.castReceiverManager.getSenders().length == 0) {
-	        window.close();
-	      }
+            window.close();
+          }
         };
-        
+
         // handler for 'systemvolumechanged' event
         castReceiverManager.onSystemVolumeChanged = function(event) {
           console.log('Received System Volume Changed event: ' + event.data['level'] + ' ' +
@@ -99,7 +99,7 @@ limitations under the License.
         window.castReceiverManager.start({statusText: "Application is starting"});
         console.log('Receiver Manager started');
       };
-      
+
       // utility function to display the text message in the input field
       function displayText(text) {
         console.log(text);
@@ -114,7 +114,7 @@ limitations under the License.
       var reddit = new window.Snoocore({
           userAgent: 'reddit-cast by terryma'
       });
-      reddit('/r/earthporn/hot').listing({
+      reddit('/r/pics/hot').listing({
           limit: 10
       }).then(function(slice) {
         console.log("got here!!!");
@@ -122,13 +122,12 @@ limitations under the License.
         console.log(slice.before);
         console.log(slice.after);
         // showImage(slice.children[0].data.url);
-        $.vegas('slideshow', {
-          delay:5000,
-          backgrounds: [
-            { src:slice.children[0].data.url, fade:1000 },
-            { src:slice.children[1].data.url, fade:1000 },
-            { src:slice.children[2].data.url, fade:1000 },
-            { src:slice.children[3].data.url, fade:1000 }
+        $('body').vegas({
+          slides: [
+            { src:slice.children[0].data.url},
+            { src:slice.children[1].data.url},
+            { src:slice.children[2].data.url},
+            { src:slice.children[3].data.url}
           ]
         });
       });
