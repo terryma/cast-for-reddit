@@ -53,7 +53,7 @@ limitations under the License.
       var reddit = new window.Snoocore({
           userAgent: 'reddit-cast by terryma'
       });
-      reddit('/r/pics/hot').listing({
+      reddit('/r/gifs/hot').listing({
           limit: 100
       }).then(function(slice) {
         console.log(slice.children);
@@ -61,16 +61,34 @@ limitations under the License.
         console.log(slice.after);
         slides = [];
         for (var i = 0; i < slice.children.length; i++) {
-          // if (slice.children[i].data.preview !== undefined) {
-          //   slides.push({src: slice.children[i].data.preview.images[0].source.url});
-          // }
-          url = slice.children[i].data.url;
-          https://api.imgur.com/3/image/
-          slides.push({src: slice.children[i].data.url});
+          data = slice.children[i].data
+          if (data.preview !== undefined) {
+            // Check if it's video
+            if (data.media !== undefined && data.media !== null && data.media.oembed.type === 'video') {
+              webm = data.url.replace("gifv", "webm");
+              mp4 = data.url.replace("gifv", "mp4");
+              slides.push(
+                  {
+                    src: data.preview.images[0].source.url,
+                    video: {
+                      src: [webm, mp4],
+                      loop: false,
+                      mute: true
+                    }
+                  }
+              )
+            } else {
+              slides.push({src: data.preview.images[0].source.url});
+            }
+          }
+          // url = slice.children[i].data.url;
+          // https://api.imgur.com/3/image/
+          // slides.push({src: slice.children[i].data.url});
         }
         console.log("slides = ", slides);
         $('body').vegas({
           cover: false,
+          color: 'white',
           slides: slides
         });
       });
