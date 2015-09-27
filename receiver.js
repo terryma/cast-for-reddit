@@ -7,14 +7,14 @@ var reddit = new window.Snoocore({
 var ss = $('#slideshow');
 var initialized = false;
 // Which subreddit to use
-var sub = 'gifs';
+var sub = 'pics';
 // How many listings to load each time
-var batchSize = 50;
+var batchSize = 10;
 // All the slides in the show
 var slides = [];
 // When we have this many items left in the current set of slides, load
 // the next batch
-var bufferSize = 10;
+var bufferSize = 5;
 var slice = null;
 var sort = "hot";
 
@@ -97,9 +97,9 @@ function handleSlice(s) {
             console.error("Could not parse url");
           }
         }
-      } else if (data.url.match(/.*gif$/)) {
+      } else if (data.url.match(/.*gif[v]?$/)) {
         console.log("url matches gif, but post does not have an embedded media. url = ", data.url);
-        match = data.url.match(/imgur.*\/(.*)\.gif$/);
+        match = data.url.match(/imgur.*\/(.*)\.gif[v]?$/);
         if (match) {
           imgurId = match[1];
           provider = "Imgur";
@@ -118,12 +118,14 @@ function handleSlice(s) {
             webm: webm
           };
         }
-      }else { // Image
+      } else { // Image
         newSlides[i] = {
           src: data.preview.images[0].source.url,
           title: data.title
         };
       }
+    } else {
+      console.error("Missing preview... Can't render slide");
     }
   }
 
@@ -140,6 +142,7 @@ function handleSlice(s) {
       console.log("Initializing slideshow...");
       ss.vegas({
         cover: false,
+        preload: true,
         color: 'black',
         slides: slides
       });
@@ -156,7 +159,7 @@ function handleSlice(s) {
       initialized = true;
     } else {
       console.log("Setting slides to ", slides);
-      console.log("Total number of slides = ", slide.length);
+      console.log("Total number of slides = ", slides.length);
       ss.vegas('options', 'slides', slides);
     }
   });
@@ -172,6 +175,7 @@ function handleSlice(s) {
 // Load posts from reddit
 reddit('/r/$subreddit/' + sort).listing({
     $subreddit: sub,
+    t: 'month',
     limit: batchSize
 }).then(handleSlice);
 
