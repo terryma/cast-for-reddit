@@ -17,18 +17,68 @@ var slides = [];
 var bufferSize = 5;
 var slice = null;
 var sort = "hot";
+var time = "week";
+var delay = 5000;
+var cover = false;
 
-function changeSub(subreddit) {
-  console.log("Received request to change sub to ", subreddit);
-  ss.vegas('destroy');
-  // Remove the previously registered handlers
-  ss.off('vegaswalk');
+function changeOption(option, value) {
+  switch (option) {
+    case 'sub':
+      showOverlay(value);
+      try {
+        reddit('/r/'+value+'/about.json').get().then(function(result) {
+          sub = value;
+          reset();
+        });
+      } catch (e) {
+        hideOverlay();
+        console.error("Invalid sub...");
+      }
+      break;
+    case 'sort':
+      sort = value;
+      reset();
+      break;
+    case 'time':
+      time = value;
+      reset();
+      break;
+    case 'delay':
+      delay = value*1000;
+      ss.vegas('options', 'delay', value*1000);
+      break;
+    case 'cover':
+      cover = value;
+      ss.vegas('options', 'cover', value);
+      break;
+  }
+}
+
+function showOverlay(title) {
+  $('#overlay-text').text("Loading from /r/"+title);
+  $('#overlay').show();
+}
+
+function hideOverlay() {
+  $('#overlay').hide();
+}
+
+function reset() {
+  showOverlay(sub);
+  updateTitle("");
+  if (initialized) {
+    ss.vegas('destroy');
+    // Remove the previously registered handlers
+    ss.off('vegaswalk');
+    ss.off('vegasplay');
+  }
   initialized = false;
   slides = [];
-  sub = subreddit;
-  // // Load posts from reddit
+
+  // Load posts from reddit
   reddit('/r/$subreddit/' + sort).listing({
       $subreddit: sub,
+      t: time,
       limit: batchSize
   }).then(handleSlice);
 }
@@ -141,8 +191,9 @@ function handleSlice(s) {
     if (!initialized) {
       console.log("Initializing slideshow...");
       ss.vegas({
-        cover: false,
+        cover: cover,
         preload: true,
+        delay: delay,
         color: 'black',
         slides: slides
       });
@@ -151,10 +202,13 @@ function handleSlice(s) {
         console.log("Current slide = ", index);
         console.log("Total slides = ", slides.length);
         console.log("slide setting = ", slideSettings);
-        $('#title').text(slideSettings.title);
+        updateTitle(slideSettings.title);
         if (slides.length - index -1 <= bufferSize) {
           slice.next().then(handleSlice);
         }
+      });
+      ss.on('vegasplay', function(e, index, slideSettings) {
+        hideOverlay();
       });
       initialized = true;
     } else {
@@ -172,10 +226,11 @@ function handleSlice(s) {
   // return slice.next().then(handleSlice);
 }
 
+function updateTitle(title) {
+  console.log("Updating title to ", title);
+  $('#title').text(title);
+}
+
 // Load posts from reddit
-reddit('/r/$subreddit/' + sort).listing({
-    $subreddit: sub,
-    t: 'month',
-    limit: batchSize
-}).then(handleSlice);
+reset();
 
