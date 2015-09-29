@@ -3,4 +3,4 @@
 	url = https://github.com/terryma/vegas
 [submodule "dat.gui"]
 	path = dat.gui
-	url = https://github.com/dataarts/dat.gui
+	url = https://github.com/terryma/dat.gui

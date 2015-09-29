@@ -3,7 +3,7 @@
   <head>
     <link rel="stylesheet" type="text/css" href="vegas/dist/vegas.min.css" />
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,300' rel='stylesheet' type='text/css'>
-    <title>Reddit Cast Local Test</title>
+    <title>Cast for Reddit</title>
     <style>
 
     .overlay-scale {
@@ -103,7 +103,7 @@
     <div id="menu-container" style="position:absolute;bottom:22px;right:0"></div>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script type="text/javascript" src="vegas/dist/vegas.js"></script>
-    <script type="text/javascript" src="dat.gui/build/dat.gui.min.js"></script>
+    <script type="text/javascript" src="dat.gui/build/dat.gui.js"></script>
     <script type="text/javascript" src="//rawgit.com/trevorsenior/snoocore/2.7.0/dist/Snoocore-standalone.js"></script>
     <script type="text/javascript" src="receiver.js"></script>
     <script type="text/javascript">
@@ -115,17 +115,94 @@
         this.showTitle = true;
         this.cover = false;
         this.pause = false;
+        this.progress = true;
       }
 
       var submenu = null;
+      var gui = null;
+
+      var preset = {
+        "preset": "default",
+        "remembered": {
+          "/r/pics": {
+            "0": {
+              "sub": "pics",
+              "sort": "hot",
+              "time": "week",
+              "delay": 5,
+              "showTitle": true,
+              "cover": false,
+              "pause": false,
+              "progress": true
+            }
+          },
+          "/r/funny": {
+            "0": {
+              "sub": "funny",
+              "sort": "hot",
+              "time": "week",
+              "delay": 20,
+              "showTitle": true,
+              "cover": false,
+              "pause": false,
+              "progress": true
+            }
+          },
+          "/r/aww": {
+            "0": {
+              "sub": "aww",
+              "sort": "hot",
+              "time": "week",
+              "delay": 5,
+              "showTitle": true,
+              "cover": false,
+              "pause": false,
+              "progress": true
+            }
+          },
+          "/r/gifs": {
+            "0": {
+              "sub": "gifs",
+              "sort": "hot",
+              "time": "week",
+              "delay": 5,
+              "showTitle": true,
+              "cover": false,
+              "pause": false,
+              "progress": true
+            }
+          },
+          "/r/earthporn": {
+            "0": {
+              "sub": "earthporn",
+              "sort": "hot",
+              "time": "week",
+              "delay": 15,
+              "showTitle": false,
+              "cover": true,
+              "pause": false,
+              "progress": false
+            }
+          }
+        },
+        "closed": false,
+        "folders": {}
+      }
 
       $(function() {
         console.log("Document is ready...");
         var menu = new Menu();
-        var gui = new dat.GUI({ autoPlace: false });
+        gui = new dat.GUI({
+          autoPlace: false,
+          preset: 'default',
+          load: preset
+        });
+        // Save menu
+        gui.remember(menu);
+
         $('#menu-container').append(gui.domElement);
 
-        gui.add(menu, 'sub').name('r/').onFinishChange(function(value) {
+        submenu = gui.add(menu, 'sub').name('/r/').onFinishChange(function(value) {
           console.log("Changing sub to ", value);
           changeOption('sub', value);
         });
@@ -145,11 +222,14 @@
         });
         // Hide initially
         timemenu.__li.style.display = "none";
-        gui.add(menu, 'delay', 3, 20).step(1).onFinishChange(function(value) {
+
+        gui.add(menu, 'delay', 1, 20).step(1).onFinishChange(function(value) {
           console.log("Changing delay to ", value);
           changeOption('delay', value);
         });
+
         gui.add(menu, 'showTitle').name("show title").onFinishChange(function(value) {
+          console.log("Changing show title to ", value);
           if (value) {
             $('#title-wrapper').show();
           } else {
@@ -157,10 +237,16 @@
           }
         });
         gui.add(menu, 'cover').onFinishChange(function(value) {
+          console.log("Changing cover to ", value);
           changeOption('cover', value);
         });
         gui.add(menu, 'pause').onFinishChange(function(value) {
+          console.log("Changing pause to ", value);
           changeOption('pause', value);
+        });
+        gui.add(menu, 'progress').name('progress bar').onFinishChange(function(value) {
+          console.log("Changing progress to ", value);
+          changeOption('progress', value);
         });
       });
     </script>

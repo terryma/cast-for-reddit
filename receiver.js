@@ -1,3 +1,7 @@
+// FIXME
+// - Get rid global vars
+// - Update Snoocore to use the latest version and handle OAuth correctly
+
 var reddit = new window.Snoocore({
     userAgent: 'reddit-cast by terryma',
     // useBrowserCookies: true
@@ -20,44 +24,53 @@ var sort = "hot";
 var time = "week";
 var delay = 5000;
 var cover = false;
+var progress = true;
 
 function changeOption(option, value) {
   switch (option) {
     case 'sub':
-      showOverlay(value);
-      try {
-        promise = reddit('/r/'+value+'/about.json').get();
-        console.log("Promise = ", promise);
-        promise.then(function(result) {
-          if($.isEmptyObject(result)) {
-            console.error("Invalid sub...");
-            hideOverlay();
-            return;
-          } else {
-            sub = value;
-            reset();
-          }
-        });
-      } catch (e) {
-        console.error("Invalid sub...");
-        hideOverlay();
+      if (sub !== value) {
+        showOverlay(value);
+        try {
+          reddit('/r/'+value+'/about.json').get().then(function(result) {
+            if($.isEmptyObject(result)) {
+              console.error("Invalid sub...");
+              hideOverlay();
+              return;
+            } else {
+              sub = value;
+              reset();
+            }
+          });
+        } catch (e) {
+          console.error("Invalid sub...");
+          hideOverlay();
+        }
       }
       break;
     case 'sort':
-      sort = value;
-      reset();
+      if (sort !== value) {
+        sort = value;
+        reset();
+      }
       break;
     case 'time':
-      time = value;
-      reset();
+      if (time !== value) {
+        time = value;
+        reset();
+      }
       break;
     case 'delay':
-      delay = value*1000;
-      ss.vegas('options', 'delay', value*1000);
+      if (delay !== value*1000) {
+        delay = value*1000;
+        ss.vegas('options', 'delay', value*1000);
+      }
       break;
     case 'cover':
-      cover = value;
-      ss.vegas('options', 'cover', value);
+      if (cover !== value) {
+        cover = value;
+        ss.vegas('options', 'cover', value);
+      }
       break;
     case 'pause':
       if (value) {
@@ -66,6 +79,21 @@ function changeOption(option, value) {
         ss.vegas('play');
       }
       break;
+    case 'progress':
+      if (progress !== value) {
+        progress = value;
+        toggleProgressBar();
+      }
+      break;
+  }
+}
+
+function toggleProgressBar() {
+  if (progress) {
+    $('.vegas-timer-progress').show();
+  } else {
+    console.log("hiding progress");
+    $('.vegas-timer-progress').hide();
   }
 }
 
@@ -79,6 +107,7 @@ function hideOverlay() {
 }
 
 function reset() {
+  console.log("Reset called...");
   showOverlay(sub);
   updateTitle("");
   if (initialized) {
@@ -98,7 +127,8 @@ function reset() {
   }).then(handleSlice);
 }
 
-function loadGfycat(url, index, slides) {
+function loadGfycat(id, index, slides, data) {
+  query = "http://gfycat.com/cajax/get/"+id;
   return $.getJSON(query, function(response) {
     console.log("Current index = ", index);
     webm = response.gfyItem.webmUrl;
@@ -111,9 +141,35 @@ function loadGfycat(url, index, slides) {
         mute: true
       },
       title: data.title,
-      provider: provider,
-      webm: webm
+      provider: 'gfycat'
     };
+  });
+}
+
+
+function setImgurHeader(xhr) {
+  xhr.setRequestHeader('Authorization', 'Client-ID 20b2c8921017ae2');
+}
+
+// Load an album from Imgur
+// FIXME Better way to do this instead of passing in all of this junk just for
+// the closure? The () syntax in coffeescript is a lot better
+function loadImgurAlbum(albumId, index, slides, title) {
+  url = "https://api.imgur.com/3/album/"+albumId+"/images";
+  return $.ajax({
+    url: url,
+    type: 'GET',
+    dataType: 'json',
+    success: function(response) {
+      console.log("Got response from imgur for album", response);
+      links = $.map(response.data, function(e) { return e.link; });
+      slides[index] = {
+        src: links,
+        title:title,
+        provider: 'Imgur'
+      }
+    },
+    beforeSend: setImgurHeader
   });
 }
 
@@ -132,6 +188,7 @@ function handleSlice(s) {
   newSlides = new Array(slice.children.length);
   for (var i = 0; i < slice.children.length; i++) {
     data = slice.children[i].data
+    console.log("url = ", data.url);
     if (data.preview !== undefined) {
       // Check if it's video
       if (data.media !== undefined && data.media !== null && data.media.oembed.type === 'video') {
@@ -148,16 +205,13 @@ function handleSlice(s) {
               mute: true
             },
             title: data.title,
-            provider: provider,
-            webm: webm
+            provider: provider
           };
         } else if (provider === 'gfycat') {
           console.log("url = ", data.url);
           match = data.url.match(/gfycat.*\/([^#]*).*$/);
           if (match) {
-            gfycatId = match[1];
-            query = "http://gfycat.com/cajax/get/"+gfycatId;
-            promise = loadGfycat(query, i, newSlides);
+            promise = loadGfycat(match[1], i, newSlides, data);
             promises.push(promise);
           } else {
             console.error("Could not parse url");
@@ -171,7 +225,6 @@ function handleSlice(s) {
           provider = "Imgur";
           webm = "http://i.imgur.com/"+imgurId+".webm";
           mp4 = "http://i.imgur.com/"+imgurId+".mp4";
-          console.log("webm link = ", webm);
           newSlides[i] = {
             src: data.preview.images[0].source.url,
             video: {
@@ -180,9 +233,19 @@ function handleSlice(s) {
               mute: true
             },
             title: data.title,
-            provider: provider,
-            webm: webm
+            provider: provider
           };
+        }
+      } else if (data.url.match(/imgur.*\/a\//)) { // Imgur album
+        console.log("url matches imgur ablum. url = ", data.url);
+        match = data.url.match(/imgur.*\/a\/(.*)/);
+        if (match) {
+          albumId = match[1];
+          console.log("Album id = ", albumId);
+          promise = loadImgurAlbum(match[1], i, newSlides, data.title);
+          promises.push(promise);
+        } else {
+          console.error("Could not parse album url");
         }
       } else { // Image
         newSlides[i] = {
@@ -199,6 +262,19 @@ function handleSlice(s) {
     newSlides = $.grep(newSlides, function(slide) {
       return slide != null;
     });
+    newSlides = $.map(newSlides, function(slide) {
+      if (slide.src instanceof Array) {
+        return $.map(slide.src, function(src, i) {
+          return {
+            src: src,
+            title: slide.title + " [" + (i+1) + "/" + slide.src.length + "]"
+          }
+        });
+      } else {
+        return slide;
+      }
+    });
+    console.log("New slides = ", newSlides);
     slides = slides.concat(newSlides);
     if (!initialized) {
       console.log("Initializing slideshow...");
@@ -222,6 +298,9 @@ function handleSlice(s) {
       ss.on('vegasplay', function(e, index, slideSettings) {
         hideOverlay();
       });
+
+      toggleProgressBar();
+
       initialized = true;
     } else {
       console.log("Setting slides to ", slides);
