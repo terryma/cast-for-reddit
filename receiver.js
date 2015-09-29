@@ -26,13 +26,21 @@ function changeOption(option, value) {
     case 'sub':
       showOverlay(value);
       try {
-        reddit('/r/'+value+'/about.json').get().then(function(result) {
-          sub = value;
-          reset();
+        promise = reddit('/r/'+value+'/about.json').get();
+        console.log("Promise = ", promise);
+        promise.then(function(result) {
+          if($.isEmptyObject(result)) {
+            console.error("Invalid sub...");
+            hideOverlay();
+            return;
+          } else {
+            sub = value;
+            reset();
+          }
         });
       } catch (e) {
-        hideOverlay();
         console.error("Invalid sub...");
+        hideOverlay();
       }
       break;
     case 'sort':
@@ -63,7 +71,7 @@ function changeOption(option, value) {
 
 function showOverlay(title) {
   $('#overlay').addClass('open');
-  $('#overlay-text').text("Loading from /r/"+title);
+  $('#subreddit').text("/r/"+title);
 }
 
 function hideOverlay() {
@@ -110,12 +118,13 @@ function loadGfycat(url, index, slides) {
 }
 
 function handleSlice(s) {
-  console.log("Handling set of slides... size = ", s.children.length);
-  console.log("slice = ", s);
+  console.log("Loaded " + s.children.length + " posts from /r/" + sub);
   slice = s;
   if (slice.empty) {
-    // We're reached end? What to do now?
-    alert("Got to the end!");
+    console.warn("Nothing more to load! Going back to the beginning");
+    if (initialized) {
+      ss.vegas('jump', 0)
+    }
     return;
   }
 
@@ -186,15 +195,11 @@ function handleSlice(s) {
     }
   }
 
-  console.log("Number of promises = ", promises.length);
   $.when.apply($, promises).then(function(results) {
-    console.log("results = ", results);
-    console.log("slides = ", slides.length);
     newSlides = $.grep(newSlides, function(slide) {
       return slide != null;
     });
     slides = slides.concat(newSlides);
-    console.log("slides = ", slides);
     if (!initialized) {
       console.log("Initializing slideshow...");
       ss.vegas({
@@ -206,9 +211,9 @@ function handleSlice(s) {
       });
       ss.css('height', 'auto');
       ss.on('vegaswalk', function(e, index, slideSettings) {
-        console.log("Current slide = ", index);
+        console.log("Current slide index = ", index);
         console.log("Total slides = ", slides.length);
-        console.log("slide setting = ", slideSettings);
+        console.log("Current slide setting = ", slideSettings);
         updateTitle(slideSettings.title);
         if (slides.length - index -1 <= bufferSize) {
           slice.next().then(handleSlice);
@@ -224,20 +229,11 @@ function handleSlice(s) {
       ss.vegas('options', 'slides', slides);
     }
   });
-    // url = slice.children[i].data.url;
-    // https://api.imgur.com/3/image/
-    // slides.push({src: slice.children[i].data.url});
-  // Immediately load the next slice. We don't wanna do that, we only want
-  // to load next when the current slideshow has played over half of the
-  // size of the last slice
-  // return slice.next().then(handleSlice);
 }
 
 function updateTitle(title) {
-  console.log("Updating title to ", title);
   $('#title').text(title);
 }
 
 // Load posts from reddit
 reset();
-
