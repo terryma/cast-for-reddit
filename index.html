@@ -104,7 +104,7 @@
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script type="text/javascript" src="vegas/dist/vegas.js"></script>
     <script type="text/javascript" src="dat.gui/build/dat.gui.js"></script>
-    <script type="text/javascript" src="//rawgit.com/trevorsenior/snoocore/2.7.0/dist/Snoocore-standalone.js"></script>
+    <script type="text/javascript" src="//rawgit.com/trevorsenior/snoocore/3.2.0/dist/Snoocore-browser.min.js"></script>
     <script type="text/javascript" src="receiver.js"></script>
     <script type="text/javascript">
       var Menu = function() {
@@ -202,7 +202,9 @@
 
         $('#menu-container').append(gui.domElement);
 
-        submenu = gui.add(menu, 'sub').name('/r/').onFinishChange(function(value) {
+        submenu = gui.add(menu, 'sub').name('/r/').onChange(function(value) {
+          // searchSubreddit(value);
+        }).onFinishChange(function(value) {
           console.log("Changing sub to ", value);
           changeOption('sub', value);
         });

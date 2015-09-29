@@ -3,8 +3,14 @@
 // - Update Snoocore to use the latest version and handle OAuth correctly
 
 var reddit = new window.Snoocore({
-    userAgent: 'reddit-cast by terryma',
-    // useBrowserCookies: true
+    userAgent: 'Cast for Reddit by terryma',
+    oauth: {
+      type: 'implicit',
+      key: 'Cu7_UH3IzqOjvA',
+      redirectUri: 'http://terry.ma', // not used
+      scope: ['read'],
+      deviceId: 'DO_NOT_TRACK_THIS_DEVICE'
+    }
 });
 
 // Initialize the slideshow
@@ -25,6 +31,13 @@ var time = "week";
 var delay = 5000;
 var cover = false;
 var progress = true;
+var loadingSlice = false;
+
+function searchSubreddit(query) {
+  reddit('/api/search_reddit_names.json').post({query: query}).then(function(result) {
+    console.log("result = ", result);
+  });
+}
 
 function changeOption(option, value) {
   switch (option) {
@@ -90,10 +103,9 @@ function changeOption(option, value) {
 
 function toggleProgressBar() {
   if (progress) {
-    $('.vegas-timer-progress').show();
+    $('.vegas-timer-progress').css('height', '100%');
   } else {
-    console.log("hiding progress");
-    $('.vegas-timer-progress').hide();
+    $('.vegas-timer-progress').css('height', '0');
   }
 }
 
@@ -120,13 +132,14 @@ function reset() {
   slides = [];
 
   // Load posts from reddit
-  reddit('/r/$subreddit/' + sort).listing({
+  reddit('/r/$subreddit/' + sort + '.json').listing({
       $subreddit: sub,
       t: time,
       limit: batchSize
   }).then(handleSlice);
 }
 
+// Load an image from Gfycat
 function loadGfycat(id, index, slides, data) {
   query = "http://gfycat.com/cajax/get/"+id;
   return $.getJSON(query, function(response) {
@@ -176,6 +189,7 @@ function loadImgurAlbum(albumId, index, slides, title) {
 function handleSlice(s) {
   console.log("Loaded " + s.children.length + " posts from /r/" + sub);
   slice = s;
+  loadingSlice = false;
   if (slice.empty) {
     console.warn("Nothing more to load! Going back to the beginning");
     if (initialized) {
@@ -291,7 +305,8 @@ function handleSlice(s) {
         console.log("Total slides = ", slides.length);
         console.log("Current slide setting = ", slideSettings);
         updateTitle(slideSettings.title);
-        if (slides.length - index -1 <= bufferSize) {
+        if (slides.length - index -1 <= bufferSize && !loadingSlice) {
+          loadingSlice = true;
           slice.next().then(handleSlice);
         }
       });

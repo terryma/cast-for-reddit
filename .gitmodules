@@ -4,3 +4,6 @@
 [submodule "dat.gui"]
 	path = dat.gui
 	url = https://github.com/terryma/dat.gui
+[submodule "snoocore"]
+	path = snoocore
+	url = https://github.com/terryma/snoocore
