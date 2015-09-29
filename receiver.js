@@ -51,16 +51,23 @@ function changeOption(option, value) {
       cover = value;
       ss.vegas('options', 'cover', value);
       break;
+    case 'pause':
+      if (value) {
+        ss.vegas('pause');
+      } else {
+        ss.vegas('play');
+      }
+      break;
   }
 }
 
 function showOverlay(title) {
+  $('#overlay').addClass('open');
   $('#overlay-text').text("Loading from /r/"+title);
-  $('#overlay').show();
 }
 
 function hideOverlay() {
-  $('#overlay').hide();
+  $('#overlay').removeClass('open');
 }
 
 function reset() {
