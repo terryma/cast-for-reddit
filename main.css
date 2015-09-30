@@ -63,7 +63,7 @@
 
 .title-cover {
   position: absolute;
-  top: 85%;
+  bottom: 10%;
   left: 5%;
   right: 40%;
   z-index: 9999;
