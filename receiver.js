@@ -45,12 +45,12 @@ function changeOption(option, value) {
   switch (option) {
     case 'sub':
       if (sub !== value) {
-        showOverlay(value);
+        showLoadingScreen(value);
         try {
           reddit('/r/'+value+'/about.json').get().then(function(result) {
             if($.isEmptyObject(result)) {
               console.error("Invalid sub...");
-              hideOverlay();
+              hideLoadingScreen();
               return;
             } else {
               sub = value;
@@ -59,7 +59,7 @@ function changeOption(option, value) {
           });
         } catch (e) {
           console.error("Invalid sub...");
-          hideOverlay();
+          hideLoadingScreen();
         }
       }
       break;
@@ -85,7 +85,7 @@ function changeOption(option, value) {
       if (cover !== value) {
         cover = value;
         ss.vegas('options', 'cover', value);
-        $('#overlay-title').toggle();
+        $('#title-cover').toggle();
         $('#title-wrapper').toggle();
       }
       break;
@@ -107,12 +107,12 @@ function changeOption(option, value) {
         showTitle = value;
         if (value) {
           if (cover) {
-            $('#overlay-title').show();
+            $('#title-cover').show();
           } else {
             $('#title-wrapper').show();
           }
         } else {
-          $('#overlay-title').hide();
+          $('#title-cover').hide();
           $('#title-wrapper').hide();
         }
       }
@@ -128,18 +128,18 @@ function toggleProgressBar() {
   }
 }
 
-function showOverlay(sub) {
+function showLoadingScreen(sub) {
   $('#subreddit').text("/r/"+sub);
-  $('#overlay').addClass('open');
+  $('#loading-screen').addClass('open');
 }
 
-function hideOverlay() {
-  $('#overlay').removeClass('open');
+function hideLoadingScreen() {
+  $('#loading-screen').removeClass('open');
 }
 
 function reset() {
   console.log("Reset called...");
-  showOverlay(sub);
+  showLoadingScreen(sub);
   updateTitle("");
   if (initialized) {
     ss.vegas('destroy');
@@ -330,7 +330,7 @@ function handleSlice(s) {
         }
       });
       ss.on('vegasplay', function(e, index, slideSettings) {
-        hideOverlay();
+        hideLoadingScreen();
       });
 
       toggleProgressBar();
@@ -346,13 +346,13 @@ function handleSlice(s) {
 
 function updateTitle(title) {
   if (showTitle) {
-    $('#overlay-title').html(title);
+    $('#title-cover').html(title);
     $('#title').html(title);
     if (cover) {
-      $('#overlay-title').show();
+      $('#title-cover').show();
       $('#title-wrapper').hide();
     } else {
-      $('#overlay-title').hide();
+      $('#title-cover').hide();
       $('#title-wrapper').show();
     }
   }

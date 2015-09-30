@@ -1,11 +1,27 @@
-.overlay-scale {
-  visibility: hidden;
-  opacity: 0;
-  -webkit-transform: scale(0.9);
-  transform: scale(0.9);
-  -webkit-transition: -webkit-transform 0.2s, opacity 0.2s, visibility 0s 0.2s;
-  transition: transform 0.2s, opacity 0.2s, visibility 0s 0.2s;
+#help-screen {
+  z-index:10000;
+}
 
+#help-screen-wrapper {
+  font-size: 4vh;
+}
+
+#help-screen span.left {
+  display: inline-block;
+  width: 3em;
+  text-align: center;
+  color:#1ABC9C;
+}
+
+#help-screen span.right {
+  padding-left: 1em;
+}
+
+.attention {
+  color:#1ABC9C;
+}
+
+.overlay {
   position:absolute;
   top:0;
   bottom:0;
@@ -14,6 +30,15 @@
   background-color:#000;
   opacity:0.8;
   z-index:9999;
+}
+
+.overlay-scale {
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transform: scale(0.9);
+  transform: scale(0.9);
+  -webkit-transition: -webkit-transform 0.2s, opacity 0.2s, visibility 0s 0.2s;
+  transition: transform 0.2s, opacity 0.2s, visibility 0s 0.2s;
 }
 
 .overlay-scale.open {
@@ -36,7 +61,7 @@
   white-space:nowrap;
 }
 
-.overlay-title {
+.title-cover {
   position: absolute;
   top: 85%;
   left: 5%;

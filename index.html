@@ -7,10 +7,10 @@
     <title>Cast for Reddit</title>
   </head>
   <body style="width:100%; height:100%; margin:0; font-family:'Oswald', sans-serif; font-size:5vh; display:table">
-    <div class="overlay-title"><span id="overlay-title" style="display:none"></span></div>
-    <div id="overlay" class="overlay-scale">
-      <div id="overlay-content" class="overlay-content">
-        <span id="overlay-text">Loading from <span id="subreddit" style="color:#1ABC9C"></span></span>
+    <div class="title-cover"><span id="title-cover" style="display:none"></span></div>
+    <div id="loading-screen" class="overlay overlay-scale">
+      <div id="loading-screen-wrapper" class="overlay-content">
+        <span>Loading from <span id="subreddit" class="attention"></span></span>
         <div class="spinner" style="display:inline-block">
           <div class="rect1"></div>
           <div class="rect2"></div>
@@ -18,6 +18,16 @@
           <div class="rect4"></div>
           <div class="rect5"></div>
         </div>
+      </div>
+    </div>
+    <div id="help-screen" class="overlay overlay-scale">
+      <div id="help-screen-wrapper" class="overlay-content">
+        <div><span class="left">?</span> - <span class="right">Toggle help</span></div>
+        <div><span class="left">space</span> - <span class="right">Toggle play/pause</span></div>
+        <div><span class="left">f</span> - <span class="right">Toggle full screen mode</span></div>
+        <div><span class="left">c</span> - <span class="right">Toggle Cover mode. In Cover mode, the image takes up the entire screen</span></div>
+        <div><span class="left">h</span> - <span class="right">Toggle the control panel in the bottom right</span></div>
+        <div><span class="left">z</span> - <span class="right">Turn on full screen, cover mode, and hide all screen overlays.  Ideal for subreddits like earthporn</span></div>
       </div>
     </div>
     <div id="title-wrapper" style="display:table-row; width:100%; background-color:black; color:white;">
@@ -45,6 +55,9 @@
         this.cover = false;
         this.pause = false;
         this.progress = true;
+        this.help = function() {
+          showHelpScreen();
+        };
       }
 
       var submenu = null;
@@ -155,6 +168,18 @@
         }
       }
 
+      function showHelpScreen() {
+        pausemenu.setValue(true);
+        $('#help-screen').addClass('open');
+        help = true;
+      }
+
+      function hideHelpScreen() {
+        pausemenu.setValue(false);
+        $('#help-screen').removeClass('open');
+        help = false;
+      }
+
       $(function() {
         console.log("Document is ready...");
         menu = new Menu();
@@ -165,6 +190,8 @@
         });
         // Save menu
         gui.remember(menu);
+
+        help = false;
 
         $('#menu-container').append(gui.domElement);
 
@@ -220,16 +247,49 @@
           changeOption('progress', value);
         });
 
+        gui.add(menu, 'help').name('press ? for help');
+
         // Set up keyboard shortcuts
-        Mousetrap.bind('h', function() { $(gui.domElement).toggle(); });
-        Mousetrap.bind('f', function() { toggleFullScreen(); });
-        Mousetrap.bind('space', function() { pausemenu.setValue(!pausemenu.getValue()); });
-        Mousetrap.bind('c', function() { covermenu.setValue(!covermenu.getValue()); });
+        Mousetrap.bind('h', function() {
+          if (!help) {
+            $(gui.domElement).toggle();
+          }
+        });
+        Mousetrap.bind('f', function() {
+          if (!help) {
+            toggleFullScreen();
+          }
+        });
+        Mousetrap.bind('space', function() {
+          if (!help) {
+            pausemenu.setValue(!pausemenu.getValue());
+          }
+        });
+        Mousetrap.bind('c', function() {
+          if (!help) {
+            covermenu.setValue(!covermenu.getValue());
+          }
+        });
         Mousetrap.bind('z', function() {
-          $(gui.domElement).hide();
-          covermenu.setValue(true);
-          progressmenu.setValue(false);
-          fullScreen();
+          if (!help) {
+            $(gui.domElement).hide();
+            covermenu.setValue(true);
+            progressmenu.setValue(false);
+            fullScreen();
+          }
+        });
+        Mousetrap.bind('esc', function() {
+          if (help) {
+            hideHelpScreen();
+            return false;
+          }
+        });
+        Mousetrap.bind('?', function() {
+          if (help) {
+            hideHelpScreen();
+          } else {
+            showHelpScreen();
+          }
         });
       });
     </script>
