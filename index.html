@@ -24,6 +24,7 @@
       <div id="help-screen-wrapper" class="overlay-content">
         <div><span class="left">?</span> - <span class="right">Toggle help</span></div>
         <div><span class="left">space</span> - <span class="right">Toggle play/pause</span></div>
+        <div><span class="left">left/right</span> - <span class="right">Previous/next slide</span></div>
         <div><span class="left">up/down</span> - <span class="right">Increase/decrease slideshow delay</span></div>
         <div><span class="left">f</span> - <span class="right">Toggle full screen mode</span></div>
         <div><span class="left">c</span> - <span class="right">Toggle Cover mode. In Cover mode, the image takes up the entire screen</span></div>
@@ -301,6 +302,16 @@
         Mousetrap.bind('down', function() {
           if (!help) {
             delaymenu.setValue(delaymenu.getValue()-1);
+          }
+        });
+        Mousetrap.bind('left', function() {
+          if (!help) {
+            ss.vegas('previous');
+          }
+        });
+        Mousetrap.bind('right', function() {
+          if (!help) {
+            ss.vegas('next');
           }
         });
       });
