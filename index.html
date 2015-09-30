@@ -44,6 +44,17 @@
       white-space:nowrap;
     }
 
+    .overlay-title {
+      position: absolute;
+      top: 85%;
+      left: 5%;
+      right: 40%;
+      z-index: 9999;
+      color: white;
+      opacity: 0.6;
+      font-size: 3vh;
+    }
+
     .spinner {
       margin: 100px auto;
       width: 51px;
@@ -100,6 +111,7 @@
     </style>
   </head>
   <body style="width:100%; height:100%; margin:0; font-family:'Oswald', sans-serif; font-size:5vh; display:table">
+    <div class="overlay-title"><span id="overlay-title" style="display:none"></span></div>
     <div id="overlay" class="overlay-scale">
       <div id="overlay-content" class="overlay-content">
         <span id="overlay-text">Loading from <span id="subreddit" style="color:#1ABC9C"></span></span>
@@ -198,7 +210,7 @@
               "sort": "hot",
               "time": "week",
               "delay": 15,
-              "showTitle": false,
+              "showTitle": true,
               "cover": true,
               "pause": false,
               "progress": false
@@ -252,11 +264,7 @@
 
         gui.add(menu, 'showTitle').name("show title").onFinishChange(function(value) {
           console.log("Changing show title to ", value);
-          if (value) {
-            $('#title-wrapper').show();
-          } else {
-            $('#title-wrapper').hide();
-          }
+          changeOption('showTitle', value);
         });
         gui.add(menu, 'cover').onFinishChange(function(value) {
           console.log("Changing cover to ", value);

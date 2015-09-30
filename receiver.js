@@ -32,6 +32,7 @@ var delay = 5000;
 var cover = false;
 var progress = true;
 var loadingSlice = false;
+var showTitle = true;
 
 function searchSubreddit(query) {
   reddit('/api/search_reddit_names.json').post({query: query}).then(function(result) {
@@ -98,6 +99,21 @@ function changeOption(option, value) {
         toggleProgressBar();
       }
       break;
+    case 'showTitle':
+      if (showTitle !== value) {
+        showTitle = value;
+        if (value) {
+          if (cover) {
+            $('#overlay-title').show();
+          } else {
+            $('#title-wrapper').show();
+          }
+        } else {
+          $('#overlay-title').hide();
+          $('#title-wrapper').hide();
+        }
+      }
+      break;
   }
 }
 
@@ -109,9 +125,9 @@ function toggleProgressBar() {
   }
 }
 
-function showOverlay(title) {
+function showOverlay(sub) {
+  $('#subreddit').text("/r/"+sub);
   $('#overlay').addClass('open');
-  $('#subreddit').text("/r/"+title);
 }
 
 function hideOverlay() {
@@ -326,7 +342,17 @@ function handleSlice(s) {
 }
 
 function updateTitle(title) {
-  $('#title').text(title);
+  if (showTitle) {
+    $('#overlay-title').html(title);
+    $('#title').html(title);
+    if (cover) {
+      $('#overlay-title').show();
+      $('#title-wrapper').hide();
+    } else {
+      $('#overlay-title').hide();
+      $('#title-wrapper').show();
+    }
+  }
 }
 
 // Load posts from reddit
