@@ -24,6 +24,7 @@
       <div id="help-screen-wrapper" class="overlay-content">
         <div><span class="left">?</span> - <span class="right">Toggle help</span></div>
         <div><span class="left">space</span> - <span class="right">Toggle play/pause</span></div>
+        <div><span class="left">up/down</span> - <span class="right">Increase/decrease slideshow delay</span></div>
         <div><span class="left">f</span> - <span class="right">Toggle full screen mode</span></div>
         <div><span class="left">c</span> - <span class="right">Toggle Cover mode. In Cover mode, the image takes up the entire screen</span></div>
         <div><span class="left">h</span> - <span class="right">Toggle the control panel in the bottom right</span></div>
@@ -222,9 +223,10 @@
         // Hide initially
         timemenu.__li.style.display = "none";
 
-        gui.add(menu, 'delay', 1, 20).step(1).onFinishChange(function(value) {
-          console.log("Changing delay to ", value);
+        delaymenu = gui.add(menu, 'delay', 1, 20).step(1).onChange(function(value) {
           changeOption('delay', value);
+        }).onFinishChange(function(value) {
+          // onFinishChange does not work when we programmatically update the delay
         });
 
         gui.add(menu, 'showTitle').name("show title").onFinishChange(function(value) {
@@ -289,6 +291,16 @@
             hideHelpScreen();
           } else {
             showHelpScreen();
+          }
+        });
+        Mousetrap.bind('up', function() {
+          if (!help) {
+            delaymenu.setValue(delaymenu.getValue()+1);
+          }
+        });
+        Mousetrap.bind('down', function() {
+          if (!help) {
+            delaymenu.setValue(delaymenu.getValue()-1);
           }
         });
       });
