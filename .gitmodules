@@ -7,3 +7,6 @@
 [submodule "snoocore"]
 	path = snoocore
 	url = https://github.com/terryma/snoocore
+[submodule "mousetrap"]
+	path = mousetrap
+	url = https://github.com/ccampbell/mousetrap
