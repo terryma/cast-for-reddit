@@ -118,6 +118,18 @@
         "folders": {}
       }
 
+      function fullScreen() {
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+          } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+          } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+          }
+      }
+
       function toggleFullScreen() {
         if (!document.fullscreenElement &&    // alternative standard method
             !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
@@ -203,7 +215,7 @@
           changeOption('pause', value);
         });
 
-        gui.add(menu, 'progress').name('progress bar').onFinishChange(function(value) {
+        progressmenu = gui.add(menu, 'progress').name('progress bar').onFinishChange(function(value) {
           console.log("Changing progress to ", value);
           changeOption('progress', value);
         });
@@ -213,6 +225,12 @@
         Mousetrap.bind('f', function() { toggleFullScreen(); });
         Mousetrap.bind('space', function() { pausemenu.setValue(!pausemenu.getValue()); });
         Mousetrap.bind('c', function() { covermenu.setValue(!covermenu.getValue()); });
+        Mousetrap.bind('z', function() {
+          $(gui.domElement).hide();
+          covermenu.setValue(true);
+          progressmenu.setValue(false);
+          fullScreen();
+        });
       });
     </script>
     <script>

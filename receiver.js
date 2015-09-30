@@ -85,6 +85,8 @@ function changeOption(option, value) {
       if (cover !== value) {
         cover = value;
         ss.vegas('options', 'cover', value);
+        $('#overlay-title').toggle();
+        $('#title-wrapper').toggle();
       }
       break;
     case 'pause':
