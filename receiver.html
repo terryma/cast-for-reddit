@@ -75,7 +75,7 @@
         window.messageBus.onMessage = function(event) {
           console.log('Message [' + event.senderId + ']: ' + event.data);
           // display the message from the sender
-          displayText(event.data);
+          processMessage(event.data);
           // inform all senders on the CastMessageBus of the incoming message event
           // sender message listener will be invoked
           window.messageBus.send(event.senderId, event.data);
@@ -86,12 +86,12 @@
         console.log('Receiver Manager started');
       };
 
-      // utility function to display the text message in the input field
-      function displayText(text) {
-        console.log("Changing sub to ", text);
-        changeSub(text);
-        // document.getElementById("message").innerHTML=text;
-        window.castReceiverManager.setApplicationState(text);
+      function processMessage(message) {
+        console.log("processing message: ", message);
+        msg = message;
+        message = JSON.parse(message);
+        changeOption(message.option, message.value);
+        window.castReceiverManager.setApplicationState(message);
       };
 
       function showImage(url) {

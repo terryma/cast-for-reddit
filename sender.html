@@ -1,0 +1,188 @@
+<!--
+Copyright (C) 2014 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cast for Reddit Sample Sender</title>
+<style type="text/css">
+</style>
+</head>
+<body>
+
+  <!-- Debbugging output -->
+  <div style="margin:10px; visibility:hidden;">
+    <textarea rows="20" cols="70" id="debugmessage">
+    </textarea>
+  </div>
+
+  <div id="menu-container" style="position:absolute;bottom:22px;right:0"></div>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
+  <script type="text/javascript" src="sender.js"></script>
+  <script type="text/javascript" src="dat.gui/build/dat.gui.js"></script>
+  <script type="text/javascript">
+
+    function changeOption(key, value) {
+      sendMessage({option: key, value: value});
+    }
+
+    var Menu = function() {
+      this.sub = 'pics';
+      this.sort = 'hot';
+      this.time = 'week';
+      this.delay = 5;
+      this.showTitle = true;
+      this.cover = false;
+      this.pause = false;
+      this.progress = true;
+    }
+
+    var submenu = null;
+    var gui = null;
+
+    var preset = {
+      "preset": "default",
+      "remembered": {
+        "/r/pics": {
+          "0": {
+            "sub": "pics",
+            "sort": "hot",
+            "time": "week",
+            "delay": 5,
+            "showTitle": true,
+            "cover": false,
+            "pause": false,
+            "progress": true
+          }
+        },
+        "/r/funny": {
+          "0": {
+            "sub": "funny",
+            "sort": "hot",
+            "time": "week",
+            "delay": 20,
+            "showTitle": true,
+            "cover": false,
+            "pause": false,
+            "progress": true
+          }
+        },
+        "/r/aww": {
+          "0": {
+            "sub": "aww",
+            "sort": "hot",
+            "time": "week",
+            "delay": 5,
+            "showTitle": true,
+            "cover": false,
+            "pause": false,
+            "progress": true
+          }
+        },
+        "/r/gifs": {
+          "0": {
+            "sub": "gifs",
+            "sort": "hot",
+            "time": "week",
+            "delay": 5,
+            "showTitle": true,
+            "cover": false,
+            "pause": false,
+            "progress": true
+          }
+        },
+        "/r/earthporn": {
+          "0": {
+            "sub": "earthporn",
+            "sort": "hot",
+            "time": "week",
+            "delay": 15,
+            "showTitle": true,
+            "cover": true,
+            "pause": false,
+            "progress": false
+          }
+        }
+      },
+      "closed": false,
+      "folders": {}
+    }
+
+    $(function() {
+      console.log("Document is ready...");
+      var menu = new Menu();
+      gui = new dat.GUI({
+        autoPlace: false,
+        preset: 'default',
+        load: preset
+      });
+      // Save menu
+      gui.remember(menu);
+
+      $('#menu-container').append(gui.domElement);
+
+      submenu = gui.add(menu, 'sub').name('/r/').onChange(function(value) {
+        // searchSubreddit(value);
+      }).onFinishChange(function(value) {
+        console.log("Changing sub to ", value);
+        if (value === 'hot' || value === 'top') {
+          console.log("invalid subs");
+          return;
+        }
+        changeOption('sub', value);
+      });
+
+      gui.add(menu, 'sort', ['hot', 'new', 'top']).onFinishChange(function(value) {
+        console.log("Changing sort to ", value);
+        if (value === 'top') {
+          timemenu.__li.style.display = "";
+        } else {
+          timemenu.__li.style.display = "none";
+        }
+        changeOption('sort', value);
+      });
+      timemenu = gui.add(menu, 'time', ['hour', 'day', 'week', 'month', 'year', 'all']).onFinishChange(function(value) {
+        console.log("Changing time to ", value);
+        changeOption('time', value);
+      });
+      // Hide initially
+      timemenu.__li.style.display = "none";
+
+      gui.add(menu, 'delay', 1, 20).step(1).onFinishChange(function(value) {
+        console.log("Changing delay to ", value);
+        changeOption('delay', value);
+      });
+
+      gui.add(menu, 'showTitle').name("show title").onFinishChange(function(value) {
+        console.log("Changing show title to ", value);
+        changeOption('showTitle', value);
+      });
+      gui.add(menu, 'cover').onFinishChange(function(value) {
+        console.log("Changing cover to ", value);
+        changeOption('cover', value);
+      });
+      gui.add(menu, 'pause').onFinishChange(function(value) {
+        console.log("Changing pause to ", value);
+        changeOption('pause', value);
+      });
+      gui.add(menu, 'progress').name('progress bar').onFinishChange(function(value) {
+        console.log("Changing progress to ", value);
+        changeOption('progress', value);
+      });
+    });
+  </script>
+</body>
+</html>

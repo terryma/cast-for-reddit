@@ -41,6 +41,7 @@ function searchSubreddit(query) {
 }
 
 function changeOption(option, value) {
+  console.log("Changing option with option = " + option + ", value = " + value);
   switch (option) {
     case 'sub':
       if (sub !== value) {
@@ -218,7 +219,7 @@ function handleSlice(s) {
   newSlides = new Array(slice.children.length);
   for (var i = 0; i < slice.children.length; i++) {
     data = slice.children[i].data
-    console.log("url = ", data.url);
+    // console.log("url = ", data.url);
     if (data.preview !== undefined) {
       // Check if it's video
       if (data.media !== undefined && data.media !== null && data.media.oembed.type === 'video') {
