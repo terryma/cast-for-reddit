@@ -1,22 +1,38 @@
-<html>
+<!DOCTYPE html>
+<html style="height:100%">
   <head>
     <link rel="stylesheet" type="text/css" href="vegas/dist/vegas.min.css" />
+    <link rel="stylesheet" type="text/css" href="main.css" />
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,300' rel='stylesheet' type='text/css'>
-    <title>Reddit Cast</title>
+    <title>Cast for Reddit</title>
   </head>
   <body style="width:100%; height:100%; margin:0; font-family:'Oswald', sans-serif; font-size:5vh; display:table">
-    <div style="display:table-row; width:100%; background-color:black; color:white">
-      <div id="title" style="display:table-cell; vertical-align: middle; height:10%; text-align:center"></div>
+    <div class="overlay-title"><span id="overlay-title" style="display:none"></span></div>
+    <div id="overlay" class="overlay-scale">
+      <div id="overlay-content" class="overlay-content">
+        <span id="overlay-text">Loading from <span id="subreddit" style="color:#1ABC9C"></span></span>
+        <div class="spinner" style="display:inline-block">
+          <div class="rect1"></div>
+          <div class="rect2"></div>
+          <div class="rect3"></div>
+          <div class="rect4"></div>
+          <div class="rect5"></div>
+        </div>
+      </div>
     </div>
-    <div style="display:table-row">
+    <div id="title-wrapper" style="display:table-row; width:100%; background-color:black; color:white;">
+      <div id="title" style="display:table-cell; vertical-align: middle; height:10%; text-align:center; padding-left:2%; padding-right:2%"></div>
+    </div>
+    <div style="display:table-row; height:100%; background-color:black">
       <div style="position:relative;height:100%;width:100%">
         <div id="slideshow" style="top:0;bottom:0;left:0;right:0;position:absolute;height:auto"></div>
       </div>
     </div>
+    <div id="menu-container" style="position:absolute;bottom:22px;right:0"></div>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script type="text/javascript" src="vegas/dist/vegas.min.js"></script>
     <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
-    <script type="text/javascript" src="//rawgit.com/trevorsenior/snoocore/2.7.0/dist/Snoocore-standalone.js"></script>
+    <script type="text/javascript" src="//rawgit.com/trevorsenior/snoocore/3.2.0/dist/Snoocore-browser.min.js"></script>
     <script type="text/javascript" src="receiver.js"></script>
     <script type="text/javascript">
       window.onload = function() {
