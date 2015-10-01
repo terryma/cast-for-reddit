@@ -178,7 +178,7 @@
 
         reset: function() {
           this.showLoadingScreen(this.sub);
-          this.updateTitle("");
+          this.hideTitle();
           if (this.initialized) {
             this.ss.vegas('destroy');
             // Remove the previously registered handlers
@@ -210,8 +210,8 @@
                 loop: false,
                 mute: true
               },
-              title: data.title,
-              provider: 'gfycat'
+              data: data,
+              title: data.title
             };
           });
         },
@@ -223,7 +223,7 @@
         // Load an album from Imgur
         // FIXME Better way to do this instead of passing in all of this junk just for
         // the closure? The () syntax in coffeescript is a lot better
-        loadImgurAlbum: function(albumId, index, slides, title) {
+        loadImgurAlbum: function(albumId, index, slides, data) {
           url = "https://api.imgur.com/3/album/"+albumId+"/images";
           return $.ajax({
             url: url,
@@ -233,8 +233,8 @@
               links = $.map(response.data, function(e) { return e.link; });
               slides[index] = {
                 src: links,
-                title:title,
-                provider: 'Imgur'
+                data: data,
+                title: data.title
               }
             },
             beforeSend: this.setImgurHeader
@@ -275,8 +275,8 @@
                       loop: false,
                       mute: true
                     },
-                    title: data.title,
-                    provider: provider
+                    data: data,
+                    title: data.title
                   };
                 } else if (provider === 'gfycat') {
                   console.log("url = ", data.url);
@@ -293,7 +293,6 @@
                 match = data.url.match(/imgur.*\/(.*)\.gif[v]?$/);
                 if (match) {
                   imgurId = match[1];
-                  provider = "Imgur";
                   webm = "http://i.imgur.com/"+imgurId+".webm";
                   mp4 = "http://i.imgur.com/"+imgurId+".mp4";
                   newSlides[i] = {
@@ -303,8 +302,8 @@
                       loop: false,
                       mute: true
                     },
-                    title: data.title,
-                    provider: provider
+                    data: data,
+                    title: data.title
                   };
                 }
               } else if (data.url.match(/imgur.*\/a\//)) { // Imgur album
@@ -313,7 +312,7 @@
                 if (match) {
                   albumId = match[1];
                   console.log("Album id = ", albumId);
-                  promise = this.loadImgurAlbum(match[1], i, newSlides, data.title);
+                  promise = this.loadImgurAlbum(match[1], i, newSlides, data);
                   promises.push(promise);
                 } else {
                   console.error("Could not parse album url");
@@ -321,6 +320,7 @@
               } else { // Image
                 newSlides[i] = {
                   src: data.preview.images[0].source.url,
+                  data: data,
                   title: data.title
                 };
               }
@@ -338,7 +338,8 @@
                 return $.map(slide.src, function(src, i) {
                   return {
                     src: src,
-                    title: slide.title + " [" + (i+1) + "/" + slide.src.length + "]"
+                    data: slide.data,
+                    title: slide.data.title + " [" + (i+1) + "/" + slide.src.length + "]",
                   }
                 });
               } else {
@@ -353,7 +354,7 @@
                 cover: self.cover,
                 preload: true,
                 delay: self.delay,
-                color: 'black',
+                color: '#1D1D1D',
                 slides: self.slides
               });
               self.ss.css('height', 'auto');
@@ -361,7 +362,7 @@
                 console.log("Current slide index = ", index);
                 console.log("Total slides = ", self.slides.length);
                 console.log("Current slide setting = ", slideSettings);
-                self.updateTitle(slideSettings.title);
+                self.updateTitle(slideSettings.title, slideSettings.data.permalink, slideSettings.data.score);
                 if (self.slides.length - index -1 <= self.bufferSize && !self.loadingSlice) {
                   self.loadingSlice = true;
                   self.slice.next().then(self.handleSlice.bind(self));
@@ -382,16 +383,26 @@
           });
         },
 
-        updateTitle: function(title) {
+        hideTitle: function() {
+            $('#title-wrapper').hide();
+            $('#title-cover').hide();
+        },
+
+        updateTitle: function(title, link, score) {
           if (this.showTitle) {
-            $('#title-cover').html(title);
-            $('#title').html(title);
+            $('#title-cover-text').html(title);
+            $('#title-cover-link').attr('href', 'https://www.reddit.com' + link);
+            $('#title-cover-score').text(score);
+            $('#title-top-text').html(title);
+            $('#title-top-link').attr('href', 'https://www.reddit.com' + link);
+            $('#title-top-score').text(score);
             if (this.cover) {
               $('#title-cover').show();
               $('#title-wrapper').hide();
             } else {
               $('#title-cover').hide();
               $('#title-wrapper').show();
+              $('#title-top-link').show();
             }
           }
         },
