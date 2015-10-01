@@ -29,7 +29,10 @@
         <div><span class="left">f</span> - <span class="right">Toggle full screen mode</span></div>
         <div><span class="left">c</span> - <span class="right">Toggle Cover mode. In Cover mode, the image takes up the entire screen</span></div>
         <div><span class="left">h</span> - <span class="right">Toggle the control panel in the bottom right</span></div>
+        <div><span class="left">t</span> - <span class="right">Toggle title display</span></div>
+        <div><span class="left">p</span> - <span class="right">Toggle progress bar display</span></div>
         <div><span class="left">z</span> - <span class="right">Turn on full screen, cover mode, and hide all screen overlays.  Ideal for subreddits like earthporn</span></div>
+        <div><span class="left">r</span> - <span class="right">Reset to default layout</span></div>
       </div>
     </div>
     <div id="title-wrapper" style="display:table-row; width:100%; background-color:black; color:white;">
@@ -48,6 +51,7 @@
     <script type="text/javascript" src="//rawgit.com/trevorsenior/snoocore/3.2.0/dist/Snoocore-browser.min.js"></script>
     <script type="text/javascript" src="receiver.js"></script>
     <script type="text/javascript">
+    $(function() {
       var Menu = function() {
         this.sub = 'pics';
         this.sort = 'hot';
@@ -62,8 +66,9 @@
         };
       }
 
-      var submenu = null;
-      var gui = null;
+      var subController;
+      var gui;
+      var redditCast;
 
       var preset = {
         "preset": "default",
@@ -133,21 +138,8 @@
         "folders": {}
       }
 
-      function fullScreen() {
-          if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-          } else if (document.documentElement.msRequestFullscreen) {
-            document.documentElement.msRequestFullscreen();
-          } else if (document.documentElement.mozRequestFullScreen) {
-            document.documentElement.mozRequestFullScreen();
-          } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-          }
-      }
-
-      function toggleFullScreen() {
-        if (!document.fullscreenElement &&    // alternative standard method
-            !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
+      function fullScreen(on) {
+        if (on) {
           if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen();
           } else if (document.documentElement.msRequestFullscreen) {
@@ -170,151 +162,190 @@
         }
       }
 
+      function toggleFullScreen() {
+        if (!document.fullscreenElement &&    // alternative standard method
+            !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
+          fullScreen(true);
+        } else {
+          fullScreen(false);
+        }
+      }
+
       function showHelpScreen() {
-        pausemenu.setValue(true);
+        pauseController.setValue(true);
         $('#help-screen').addClass('open');
         help = true;
       }
 
       function hideHelpScreen() {
-        pausemenu.setValue(false);
+        pauseController.setValue(false);
         $('#help-screen').removeClass('open');
         help = false;
       }
 
-      $(function() {
-        console.log("Document is ready...");
-        menu = new Menu();
-        gui = new dat.GUI({
-          autoPlace: false,
-          preset: 'default',
-          load: preset
-        });
-        // Save menu
-        gui.remember(menu);
-
-        help = false;
-
-        $('#menu-container').append(gui.domElement);
-
-        submenu = gui.add(menu, 'sub').name('/r/').onChange(function(value) {
-          // searchSubreddit(value);
-        }).onFinishChange(function(value) {
-          console.log("Changing sub to ", value);
-          if (value === 'hot' || value === 'top') {
-            console.log("invalid subs");
-            return;
-          }
-          changeOption('sub', value);
-        });
-
-        gui.add(menu, 'sort', ['hot', 'new', 'top']).onFinishChange(function(value) {
-          console.log("Changing sort to ", value);
-          if (value === 'top') {
-            timemenu.__li.style.display = "";
-          } else {
-            timemenu.__li.style.display = "none";
-          }
-          changeOption('sort', value);
-        });
-        timemenu = gui.add(menu, 'time', ['hour', 'day', 'week', 'month', 'year', 'all']).onFinishChange(function(value) {
-          console.log("Changing time to ", value);
-          changeOption('time', value);
-        });
-        // Hide initially
-        timemenu.__li.style.display = "none";
-
-        delaymenu = gui.add(menu, 'delay', 1, 20).step(1).onChange(function(value) {
-          changeOption('delay', value);
-        }).onFinishChange(function(value) {
-          // onFinishChange does not work when we programmatically update the delay
-        });
-
-        gui.add(menu, 'showTitle').name("show title").onFinishChange(function(value) {
-          console.log("Changing show title to ", value);
-          changeOption('showTitle', value);
-        });
-
-        covermenu = gui.add(menu, 'cover').onFinishChange(function(value) {
-          console.log("Changing cover to ", value);
-          changeOption('cover', value);
-        });
-
-        pausemenu = gui.add(menu, 'pause').onFinishChange(function(value) {
-          console.log("Changing pause to ", value);
-          changeOption('pause', value);
-        });
-
-        progressmenu = gui.add(menu, 'progress').name('progress bar').onFinishChange(function(value) {
-          console.log("Changing progress to ", value);
-          changeOption('progress', value);
-        });
-
-        gui.add(menu, 'help').name('press ? for help');
-
-        // Set up keyboard shortcuts
-        Mousetrap.bind('h', function() {
-          if (!help) {
-            $(gui.domElement).toggle();
-          }
-        });
-        Mousetrap.bind('f', function() {
-          if (!help) {
-            toggleFullScreen();
-          }
-        });
-        Mousetrap.bind('space', function() {
-          if (!help) {
-            pausemenu.setValue(!pausemenu.getValue());
-          }
-        });
-        Mousetrap.bind('c', function() {
-          if (!help) {
-            covermenu.setValue(!covermenu.getValue());
-          }
-        });
-        Mousetrap.bind('z', function() {
-          if (!help) {
-            $(gui.domElement).hide();
-            covermenu.setValue(true);
-            progressmenu.setValue(false);
-            fullScreen();
-          }
-        });
-        Mousetrap.bind('esc', function() {
-          if (help) {
-            hideHelpScreen();
-            return false;
-          }
-        });
-        Mousetrap.bind('?', function() {
-          if (help) {
-            hideHelpScreen();
-          } else {
-            showHelpScreen();
-          }
-        });
-        Mousetrap.bind('up', function() {
-          if (!help) {
-            delaymenu.setValue(delaymenu.getValue()+1);
-          }
-        });
-        Mousetrap.bind('down', function() {
-          if (!help) {
-            delaymenu.setValue(delaymenu.getValue()-1);
-          }
-        });
-        Mousetrap.bind('left', function() {
-          if (!help) {
-            ss.vegas('previous');
-          }
-        });
-        Mousetrap.bind('right', function() {
-          if (!help) {
-            ss.vegas('next');
-          }
-        });
+      menu = new Menu();
+      gui = new dat.GUI({
+        autoPlace: false,
+        preset: 'default',
+        load: preset
       });
+      // Save menu
+      gui.remember(menu);
+
+      help = false;
+
+      $('#menu-container').append(gui.domElement);
+
+      // Initialize our plugin. No optional params for now
+      redditCast = new RedditCast();
+      console.log("reddit cast = ", redditCast);
+
+      // Controller for changing subreddits
+      subController = gui.add(menu, 'sub').name('/r/').onChange(function(value) {
+        // searchSubreddit(value);
+      }).onFinishChange(function(value) {
+        console.log("Changing sub to ", value);
+        if (value === 'hot' || value === 'top') {
+          console.log("invalid subs");
+          return;
+        }
+        redditCast.changeOption('sub', value);
+      });
+
+      // Controller for changing sort order of posts in a sub
+      sortController = gui.add(menu, 'sort', ['hot', 'new', 'top']).onFinishChange(function(value) {
+        console.log("Changing sort to ", value);
+        if (value === 'top') {
+          timeController.__li.style.display = "";
+        } else {
+          timeController.__li.style.display = "none";
+        }
+        redditCast.changeOption('sort', value);
+      });
+
+      // Controller for changing the time range when sort order if top
+      timeController = gui.add(menu, 'time', ['hour', 'day', 'week', 'month', 'year', 'all']).onFinishChange(function(value) {
+        console.log("Changing time to ", value);
+        redditCast.changeOption('time', value);
+      });
+      // Hide initially
+      timeController.__li.style.display = "none";
+
+      // Controller for changing the delay between slides
+      delayController = gui.add(menu, 'delay', 1, 20).step(1).onChange(function(value) {
+        redditCast.changeOption('delay', value);
+      }).onFinishChange(function(value) {
+        // onFinishChange does not work when we programmatically update the delay
+      });
+
+      // Controller for showing/hiding title
+      titleController = gui.add(menu, 'showTitle').name("show title").onFinishChange(function(value) {
+        console.log("Changing show title to ", value);
+        redditCast.changeOption('showTitle', value);
+      });
+
+      // Controller for cover mode
+      coverController = gui.add(menu, 'cover').onFinishChange(function(value) {
+        console.log("Changing cover to ", value);
+        redditCast.changeOption('cover', value);
+      });
+
+      // Controller for pausing/resuming the slideshow
+      pauseController = gui.add(menu, 'pause').onFinishChange(function(value) {
+        console.log("Changing pause to ", value);
+        redditCast.changeOption('pause', value);
+      });
+
+      // Controller for showing/hiding the progress bar
+      progressBarController = gui.add(menu, 'progress').name('progress bar').onFinishChange(function(value) {
+        console.log("Changing progress to ", value);
+        redditCast.changeOption('progress', value);
+      });
+
+      // Controller for showing the help screen
+      helpController = gui.add(menu, 'help').name('press ? for help');
+
+      // Set up keyboard shortcuts
+      Mousetrap.bind('h', function() {
+        if (!help) {
+          $(gui.domElement).toggle();
+        }
+      });
+      Mousetrap.bind('f', function() {
+        if (!help) {
+          toggleFullScreen();
+        }
+      });
+      Mousetrap.bind('space', function() {
+        if (!help) {
+          pauseController.setValue(!pauseController.getValue());
+        }
+      });
+      Mousetrap.bind('c', function() {
+        if (!help) {
+          coverController.setValue(!coverController.getValue());
+        }
+      });
+      Mousetrap.bind('z', function() {
+        if (!help) {
+          $(gui.domElement).hide();
+          coverController.setValue(true);
+          progressBarController.setValue(false);
+          fullScreen(true);
+        }
+      });
+      Mousetrap.bind('r', function() {
+        if (!help) {
+          $(gui.domElement).show();
+          coverController.setValue(false);
+          progressBarController.setValue(true);
+          fullScreen(false);
+        }
+      });
+      Mousetrap.bind('esc', function() {
+        if (help) {
+          hideHelpScreen();
+          return false;
+        }
+      });
+      Mousetrap.bind('?', function() {
+        if (help) {
+          hideHelpScreen();
+        } else {
+          showHelpScreen();
+        }
+      });
+      Mousetrap.bind('t', function() {
+        if (!help) {
+          titleController.setValue(!titleController.getValue());
+        }
+      });
+      Mousetrap.bind('p', function() {
+        if (!help) {
+          progressBarController.setValue(!progressBarController.getValue());
+        }
+      });
+      Mousetrap.bind('up', function() {
+        if (!help) {
+          delayController.setValue(delayController.getValue()+1);
+        }
+      });
+      Mousetrap.bind('down', function() {
+        if (!help) {
+          delayController.setValue(delayController.getValue()-1);
+        }
+      });
+      Mousetrap.bind('left', function() {
+        if (!help) {
+          redditCast.previous();
+        }
+      });
+      Mousetrap.bind('right', function() {
+        if (!help) {
+          redditCast.next();
+        }
+      });
+    });
     </script>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
