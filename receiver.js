@@ -407,11 +407,11 @@
           }
         },
 
-        previous() {
+        previous: function() {
           this.ss.vegas('previous');
         },
 
-        next() {
+        next: function() {
           this.ss.vegas('next');
         }
 
