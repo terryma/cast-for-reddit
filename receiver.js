@@ -55,7 +55,7 @@
           // Time range. TODO Pass this in
           this.time = "week";
           // Delay between slides. TODO Pass this in
-          this.delay = 5000;
+          this.delay = 10000;
           // Cover node? TODO Pass this in
           this.cover = false;
           // Show progress bar? TODO Pass this in

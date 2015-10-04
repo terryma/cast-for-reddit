@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html style="height:100%">
+  <head>
+    <link rel="stylesheet" type="text/css" href="../vegas/dist/vegas.min.css" />
+    <link rel="stylesheet" type="text/css" href="../main.css" />
+    <link href='https://fonts.googleapis.com/css?family=Oswald:400,300' rel='stylesheet' type='text/css'>
+    <title>Cast for Reddit</title>
+  </head>
+  <body style="width:100%; height:100%; margin:0; font-family:'Oswald', sans-serif; font-size:5vh; display:table">
+    <div id="title-cover" class="title-cover" style="display:none">
+      <span id="title-cover-text"></span>
+      <a target="_blank" id="title-cover-link" style="color:inherit;text-decoration:none;padding-left:0.5em">
+        [&#8679;
+        <span id="title-cover-score"></span>
+        <img src="../images/reddit-alien.svg" style="height:1em;display:inline-block;vertical-align:bottom;opacity:0.7;padding-bottom:0.3em;padding-left:0.1em">
+        ]
+      </a>
+    </div>
+    <div id="loading-screen" class="overlay overlay-scale">
+      <div id="loading-screen-wrapper" class="overlay-content">
+        <span>Loading from <span id="subreddit" class="attention"></span></span>
+        <div class="spinner" style="display:inline-block">
+          <div class="rect1"></div>
+          <div class="rect2"></div>
+          <div class="rect3"></div>
+          <div class="rect4"></div>
+          <div class="rect5"></div>
+        </div>
+      </div>
+    </div>
+    <div id="help-screen" class="overlay overlay-scale">
+      <div id="help-screen-wrapper" class="overlay-content">
+        <div><span class="left">?</span> - <span class="right">Toggle help</span></div>
+        <div><span class="left">space</span> - <span class="right">Toggle play/pause</span></div>
+        <div><span class="left">left/right</span> - <span class="right">Previous/next slide</span></div>
+        <div><span class="left">up/down</span> - <span class="right">Increase/decrease slideshow delay</span></div>
+        <div><span class="left">f</span> - <span class="right">Toggle full screen mode</span></div>
+        <div><span class="left">c</span> - <span class="right">Toggle Cover mode. In Cover mode, the image takes up the entire screen</span></div>
+        <div><span class="left">h</span> - <span class="right">Toggle the control panel in the bottom right</span></div>
+        <div><span class="left">t</span> - <span class="right">Toggle title display</span></div>
+        <div><span class="left">p</span> - <span class="right">Toggle progress bar display</span></div>
+        <div><span class="left">z</span> - <span class="right">Turn on full screen, cover mode, and hide all screen overlays</span></div>
+        <div><span class="left">r</span> - <span class="right">Reset to default layout</span></div>
+      </div>
+    </div>
+    <div id="title-wrapper" style="display:table-row; width:100%;
+      background-color:#1D1D1D; color:white;">
+      <div id="title-top" style="display:table-cell; vertical-align: middle; height:10%; text-align:center; padding-left:2%; padding-right:2%">
+        <span id="title-top-text"></span>
+        <a target="_blank" id="title-top-link" style="display:none; color:inherit;text-decoration:none;padding-left:0.5em">
+          [&#8679;
+          <span id="title-top-score"></span>
+          <img src="../images/reddit-alien.svg" style="height:1em;display:inline-block;vertical-align:bottom;opacity:0.7;padding-bottom:0.3em;padding-left:0.1em">
+          ]
+        </a>
+      </div>
+    </div>
+    <div style="display:table-row; height:100%; background-color:#1D1D1D;">
+      <div style="position:relative;height:100%;width:100%">
+        <div id="slideshow" style="top:0;bottom:0;left:0;right:0;position:absolute;height:auto"></div>
+      </div>
+    </div>
+    <div id="menu-container" style="position:absolute;bottom:22px;right:0"></div>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type="text/javascript" src="../vegas/dist/vegas.js"></script>
+    <script type="text/javascript" src="../dat.gui/build/dat.gui.js"></script>
+    <script type="text/javascript" src="../mousetrap/mousetrap.min.js"></script>
+    <script type="text/javascript" src="//rawgit.com/trevorsenior/snoocore/3.2.0/dist/Snoocore-browser.min.js"></script>
+    <script type="text/javascript" src="../receiver.js"></script>
+    <script type="text/javascript">
+    $(function() {
+      var Menu = function() {
+        this.sub = 'pics';
+        this.sort = 'hot';
+        this.time = 'week';
+        this.delay = 10;
+        this.showTitle = true;
+        this.cover = false;
+        this.pause = false;
+        this.progress = true;
+        this.help = function() {
+          showHelpScreen();
+        };
+      }
+
+      var subController;
+      var gui;
+      var redditCast;
+
+      var preset = {
+        "preset": "default",
+        "remembered": {
+          "/r/pics": {
+            "0": {
+              "sub": "pics",
+              "sort": "hot",
+              "time": "week",
+              "delay": 5,
+              "showTitle": true,
+              "cover": false,
+              "pause": false,
+              "progress": true
+            }
+          },
+          "/r/funny": {
+            "0": {
+              "sub": "funny",
+              "sort": "hot",
+              "time": "week",
+              "delay": 20,
+              "showTitle": true,
+              "cover": false,
+              "pause": false,
+              "progress": true
+            }
+          },
+          "/r/aww": {
+            "0": {
+              "sub": "aww",
+              "sort": "hot",
+              "time": "week",
+              "delay": 5,
+              "showTitle": true,
+              "cover": false,
+              "pause": false,
+              "progress": true
+            }
+          },
+          "/r/gifs": {
+            "0": {
+              "sub": "gifs",
+              "sort": "hot",
+              "time": "week",
+              "delay": 5,
+              "showTitle": true,
+              "cover": false,
+              "pause": false,
+              "progress": true
+            }
+          },
+          "/r/earthporn": {
+            "0": {
+              "sub": "earthporn",
+              "sort": "hot",
+              "time": "week",
+              "delay": 15,
+              "showTitle": true,
+              "cover": true,
+              "pause": false,
+              "progress": false
+            }
+          }
+        },
+        "closed": false,
+        "folders": {}
+      }
+
+      function fullScreen(on) {
+        if (on) {
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+          } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+          } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+        }
+      }
+
+      function toggleFullScreen() {
+        if (!document.fullscreenElement &&    // alternative standard method
+            !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
+          fullScreen(true);
+        } else {
+          fullScreen(false);
+        }
+      }
+
+      function showHelpScreen() {
+        pauseController.setValue(true);
+        $('#help-screen').addClass('open');
+        help = true;
+      }
+
+      function hideHelpScreen() {
+        pauseController.setValue(false);
+        $('#help-screen').removeClass('open');
+        help = false;
+      }
+
+      menu = new Menu();
+      gui = new dat.GUI({
+        autoPlace: false,
+        preset: 'default',
+        load: preset
+      });
+      // Save menu
+      gui.remember(menu);
+
+      help = false;
+
+      $('#menu-container').append(gui.domElement);
+
+      // Initialize our plugin. No optional params for now
+      redditCast = new RedditCast();
+      console.log("reddit cast = ", redditCast);
+
+      // Controller for changing subreddits
+      subController = gui.add(menu, 'sub').name('/r/').onChange(function(value) {
+        // searchSubreddit(value);
+      }).onFinishChange(function(value) {
+        console.log("Changing sub to ", value);
+        if (value === 'hot' || value === 'top') {
+          console.log("invalid subs");
+          return;
+        }
+        redditCast.changeOption('sub', value);
+      });
+
+      // Controller for changing sort order of posts in a sub
+      sortController = gui.add(menu, 'sort', ['hot', 'new', 'top']).onFinishChange(function(value) {
+        console.log("Changing sort to ", value);
+        if (value === 'top') {
+          timeController.__li.style.display = "";
+        } else {
+          timeController.__li.style.display = "none";
+        }
+        redditCast.changeOption('sort', value);
+      });
+
+      // Controller for changing the time range when sort order if top
+      timeController = gui.add(menu, 'time', ['hour', 'day', 'week', 'month', 'year', 'all']).onFinishChange(function(value) {
+        console.log("Changing time to ", value);
+        redditCast.changeOption('time', value);
+      });
+      // Hide initially
+      timeController.__li.style.display = "none";
+
+      // Controller for changing the delay between slides
+      delayController = gui.add(menu, 'delay', 1, 20).step(1).onChange(function(value) {
+        redditCast.changeOption('delay', value);
+      }).onFinishChange(function(value) {
+        // onFinishChange does not work when we programmatically update the delay
+      });
+
+      // Controller for showing/hiding title
+      titleController = gui.add(menu, 'showTitle').name("show title").onFinishChange(function(value) {
+        console.log("Changing show title to ", value);
+        redditCast.changeOption('showTitle', value);
+      });
+
+      // Controller for cover mode
+      coverController = gui.add(menu, 'cover').onFinishChange(function(value) {
+        console.log("Changing cover to ", value);
+        redditCast.changeOption('cover', value);
+      });
+
+      // Controller for pausing/resuming the slideshow
+      pauseController = gui.add(menu, 'pause').onFinishChange(function(value) {
+        console.log("Changing pause to ", value);
+        redditCast.changeOption('pause', value);
+      });
+
+      // Controller for showing/hiding the progress bar
+      progressBarController = gui.add(menu, 'progress').name('progress bar').onFinishChange(function(value) {
+        console.log("Changing progress to ", value);
+        redditCast.changeOption('progress', value);
+      });
+
+      // Controller for showing the help screen
+      helpController = gui.add(menu, 'help').name('press ? for help');
+
+      // Set up keyboard shortcuts
+      Mousetrap.bind('h', function() {
+        if (!help) {
+          $(gui.domElement).toggle();
+        }
+      });
+      Mousetrap.bind('f', function() {
+        if (!help) {
+          toggleFullScreen();
+        }
+      });
+      Mousetrap.bind('space', function() {
+        if (!help) {
+          pauseController.setValue(!pauseController.getValue());
+        }
+      });
+      Mousetrap.bind('c', function() {
+        if (!help) {
+          coverController.setValue(!coverController.getValue());
+        }
+      });
+      Mousetrap.bind('z', function() {
+        if (!help) {
+          $(gui.domElement).hide();
+          coverController.setValue(true);
+          progressBarController.setValue(false);
+          fullScreen(true);
+        }
+      });
+      Mousetrap.bind('r', function() {
+        if (!help) {
+          $(gui.domElement).show();
+          coverController.setValue(false);
+          progressBarController.setValue(true);
+          fullScreen(false);
+        }
+      });
+      Mousetrap.bind('esc', function() {
+        if (help) {
+          hideHelpScreen();
+          return false;
+        }
+      });
+      Mousetrap.bind('?', function() {
+        if (help) {
+          hideHelpScreen();
+        } else {
+          showHelpScreen();
+        }
+      });
+      Mousetrap.bind('t', function() {
+        if (!help) {
+          titleController.setValue(!titleController.getValue());
+        }
+      });
+      Mousetrap.bind('p', function() {
+        if (!help) {
+          progressBarController.setValue(!progressBarController.getValue());
+        }
+      });
+      Mousetrap.bind('up', function() {
+        if (!help) {
+          delayController.setValue(delayController.getValue()+1);
+        }
+      });
+      Mousetrap.bind('down', function() {
+        if (!help) {
+          delayController.setValue(delayController.getValue()-1);
+        }
+      });
+      Mousetrap.bind('left', function() {
+        if (!help) {
+          redditCast.previous();
+        }
+      });
+      Mousetrap.bind('right', function() {
+        if (!help) {
+          redditCast.next();
+        }
+      });
+    });
+    </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-16954188-5', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

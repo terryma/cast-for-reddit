@@ -1,378 +1,277 @@
 <!DOCTYPE html>
-<html style="height:100%">
-  <head>
-    <link rel="stylesheet" type="text/css" href="vegas/dist/vegas.min.css" />
-    <link rel="stylesheet" type="text/css" href="main.css" />
-    <link href='https://fonts.googleapis.com/css?family=Oswald:400,300' rel='stylesheet' type='text/css'>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
     <title>Cast for Reddit</title>
-  </head>
-  <body style="width:100%; height:100%; margin:0; font-family:'Oswald', sans-serif; font-size:5vh; display:table">
-    <div id="title-cover" class="title-cover" style="display:none">
-      <span id="title-cover-text"></span>
-      <a target="_blank" id="title-cover-link" style="color:inherit;text-decoration:none;padding-left:0.5em">
-        [&#8679;
-        <span id="title-cover-score"></span>
-        <img src="images/reddit-alien.svg" style="height:1em;display:inline-block;vertical-align:bottom;opacity:0.7;padding-bottom:0.3em;padding-left:0.1em">
-        ]
-      </a>
-    </div>
-    <div id="loading-screen" class="overlay overlay-scale">
-      <div id="loading-screen-wrapper" class="overlay-content">
-        <span>Loading from <span id="subreddit" class="attention"></span></span>
-        <div class="spinner" style="display:inline-block">
-          <div class="rect1"></div>
-          <div class="rect2"></div>
-          <div class="rect3"></div>
-          <div class="rect4"></div>
-          <div class="rect5"></div>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+
+    <!-- Custom Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css" type="text/css">
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="css/animate.min.css" type="text/css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/creative.css" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top">
+
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">Cast for Reddit</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="page-scroll" href="#about">Ways to Cast</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
         </div>
-      </div>
-    </div>
-    <div id="help-screen" class="overlay overlay-scale">
-      <div id="help-screen-wrapper" class="overlay-content">
-        <div><span class="left">?</span> - <span class="right">Toggle help</span></div>
-        <div><span class="left">space</span> - <span class="right">Toggle play/pause</span></div>
-        <div><span class="left">left/right</span> - <span class="right">Previous/next slide</span></div>
-        <div><span class="left">up/down</span> - <span class="right">Increase/decrease slideshow delay</span></div>
-        <div><span class="left">f</span> - <span class="right">Toggle full screen mode</span></div>
-        <div><span class="left">c</span> - <span class="right">Toggle Cover mode. In Cover mode, the image takes up the entire screen</span></div>
-        <div><span class="left">h</span> - <span class="right">Toggle the control panel in the bottom right</span></div>
-        <div><span class="left">t</span> - <span class="right">Toggle title display</span></div>
-        <div><span class="left">p</span> - <span class="right">Toggle progress bar display</span></div>
-        <div><span class="left">z</span> - <span class="right">Turn on full screen, cover mode, and hide all screen overlays</span></div>
-        <div><span class="left">r</span> - <span class="right">Reset to default layout</span></div>
-      </div>
-    </div>
-    <div id="title-wrapper" style="display:table-row; width:100%;
-      background-color:#1D1D1D; color:white;">
-      <div id="title-top" style="display:table-cell; vertical-align: middle; height:10%; text-align:center; padding-left:2%; padding-right:2%">
-        <span id="title-top-text"></span>
-        <a target="_blank" id="title-top-link" style="display:none; color:inherit;text-decoration:none;padding-left:0.5em">
-          [&#8679;
-          <span id="title-top-score"></span>
-          <img src="images/reddit-alien.svg" style="height:1em;display:inline-block;vertical-align:bottom;opacity:0.7;padding-bottom:0.3em;padding-left:0.1em">
-          ]
-        </a>
-      </div>
-    </div>
-    <div style="display:table-row; height:100%; background-color:#1D1D1D;">
-      <div style="position:relative;height:100%;width:100%">
-        <div id="slideshow" style="top:0;bottom:0;left:0;right:0;position:absolute;height:auto"></div>
-      </div>
-    </div>
-    <div id="menu-container" style="position:absolute;bottom:22px;right:0"></div>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script type="text/javascript" src="vegas/dist/vegas.js"></script>
-    <script type="text/javascript" src="dat.gui/build/dat.gui.js"></script>
-    <script type="text/javascript" src="mousetrap/mousetrap.min.js"></script>
-    <script type="text/javascript" src="//rawgit.com/trevorsenior/snoocore/3.2.0/dist/Snoocore-browser.min.js"></script>
-    <script type="text/javascript" src="receiver.js"></script>
-    <script type="text/javascript">
-    $(function() {
-      var Menu = function() {
-        this.sub = 'pics';
-        this.sort = 'hot';
-        this.time = 'week';
-        this.delay = 5;
-        this.showTitle = true;
-        this.cover = false;
-        this.pause = false;
-        this.progress = true;
-        this.help = function() {
-          showHelpScreen();
-        };
-      }
+        <!-- /.container-fluid -->
+    </nav>
 
-      var subController;
-      var gui;
-      var redditCast;
+    <header>
+        <div class="header-content">
+            <div class="header-content-inner">
+              <h1 style="font-weight:600;font-size:75px;text-shadow:2px 2px 5px #000">Turn 
+                <img src="Reddit_logo.svg" style="height: 120px;padding-bottom:7px; vertical-align:bottom"/> into a slideshow on the big screen</h1>
+                <hr>
+                <!-- <p>Start Bootstrap can help you build better websites using the Bootstrap CSS framework! Just download your template and start going, no strings attached!</p> -->
+                <a href="player/" class="btn btn-primary btn-xl
+                  page-scroll" style="font-size:35px">Launch</a>
+            </div>
+        </div>
+    </header>
 
-      var preset = {
-        "preset": "default",
-        "remembered": {
-          "/r/pics": {
-            "0": {
-              "sub": "pics",
-              "sort": "hot",
-              "time": "week",
-              "delay": 5,
-              "showTitle": true,
-              "cover": false,
-              "pause": false,
-              "progress": true
-            }
-          },
-          "/r/funny": {
-            "0": {
-              "sub": "funny",
-              "sort": "hot",
-              "time": "week",
-              "delay": 20,
-              "showTitle": true,
-              "cover": false,
-              "pause": false,
-              "progress": true
-            }
-          },
-          "/r/aww": {
-            "0": {
-              "sub": "aww",
-              "sort": "hot",
-              "time": "week",
-              "delay": 5,
-              "showTitle": true,
-              "cover": false,
-              "pause": false,
-              "progress": true
-            }
-          },
-          "/r/gifs": {
-            "0": {
-              "sub": "gifs",
-              "sort": "hot",
-              "time": "week",
-              "delay": 5,
-              "showTitle": true,
-              "cover": false,
-              "pause": false,
-              "progress": true
-            }
-          },
-          "/r/earthporn": {
-            "0": {
-              "sub": "earthporn",
-              "sort": "hot",
-              "time": "week",
-              "delay": 15,
-              "showTitle": true,
-              "cover": true,
-              "pause": false,
-              "progress": false
-            }
-          }
-        },
-        "closed": false,
-        "folders": {}
-      }
+    <!-- <section class="bg-primary" id="about"> -->
+        <!-- <div class="container"> -->
+            <!-- <div class="row"> -->
+                <!-- <div class="col-lg-8 col-lg-offset-2 text-center"> -->
+                    <!-- <h2 class="section-heading">Ways to Cast</h2> -->
+                    <!-- <hr class="light"> -->
+                    <!-- <p class="text-faded">Download the Google Cast chrome -->
+                    <!-- extension</p> -->
+                    <!-- [> <a href="#" class="btn btn-default btn-xl">Get Started!</a> <] -->
+                <!-- </div> -->
+            <!-- </div> -->
+        <!-- </div> -->
+    <!-- </section> -->
 
-      function fullScreen(on) {
-        if (on) {
-          if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-          } else if (document.documentElement.msRequestFullscreen) {
-            document.documentElement.msRequestFullscreen();
-          } else if (document.documentElement.mozRequestFullScreen) {
-            document.documentElement.mozRequestFullScreen();
-          } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-          }
-        } else {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-          } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-          } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-          }
-        }
-      }
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">Ways to Cast</h2>
+                    <hr class="primary">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-desktop wow bounceIn text-primary"></i>
+                        <h3>Web Player</h3>
+                        <a href="player/" class="btn btn-primary">Launch</a>
+                        <!-- <p class="text-muted">Launch the web player. Cast to -->
+                        <!-- your TV using the Google Cast chrome extension</p> -->
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-android wow bounceIn text-primary" data-wow-delay=".1s"></i>
+                        <h3>Android</h3>
+                        <a href="#" class="btn btn-primary">Download</a>
+                        <!-- <p class="text-muted">Download the Android app with -->
+                        <!-- Chromecast support</p> -->
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-apple wow bounceIn text-primary" data-wow-delay=".2s"></i>
+                        <h3>iOS</h3>
+                        <a href="#" class="btn btn-primary">Download</a>
+                        <!-- <p class="text-muted">Download the iOS app with -->
+                        <!-- Chromecast support</p> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-      function toggleFullScreen() {
-        if (!document.fullscreenElement &&    // alternative standard method
-            !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
-          fullScreen(true);
-        } else {
-          fullScreen(false);
-        }
-      }
+    <!-- <section class="no-padding" id="portfolio"> -->
+        <!-- <div class="container-fluid"> -->
+            <!-- <div class="row no-gutter"> -->
+                <!-- <div class="col-lg-4 col-sm-6"> -->
+                    <!-- <a href="#" class="portfolio-box"> -->
+                        <!-- <img src="img/portfolio/1.jpg" class="img-responsive" alt=""> -->
+                        <!-- <div class="portfolio-box-caption"> -->
+                            <!-- <div class="portfolio-box-caption-content"> -->
+                                <!-- <div class="project-category text-faded"> -->
+                                    <!-- Category -->
+                                <!-- </div> -->
+                                <!-- <div class="project-name"> -->
+                                    <!-- Project Name -->
+                                <!-- </div> -->
+                            <!-- </div> -->
+                        <!-- </div> -->
+                    <!-- </a> -->
+                <!-- </div> -->
+                <!-- <div class="col-lg-4 col-sm-6"> -->
+                    <!-- <a href="#" class="portfolio-box"> -->
+                        <!-- <img src="img/portfolio/2.jpg" class="img-responsive" alt=""> -->
+                        <!-- <div class="portfolio-box-caption"> -->
+                            <!-- <div class="portfolio-box-caption-content"> -->
+                                <!-- <div class="project-category text-faded"> -->
+                                    <!-- Category -->
+                                <!-- </div> -->
+                                <!-- <div class="project-name"> -->
+                                    <!-- Project Name -->
+                                <!-- </div> -->
+                            <!-- </div> -->
+                        <!-- </div> -->
+                    <!-- </a> -->
+                <!-- </div> -->
+                <!-- <div class="col-lg-4 col-sm-6"> -->
+                    <!-- <a href="#" class="portfolio-box"> -->
+                        <!-- <img src="img/portfolio/3.jpg" class="img-responsive" alt=""> -->
+                        <!-- <div class="portfolio-box-caption"> -->
+                            <!-- <div class="portfolio-box-caption-content"> -->
+                                <!-- <div class="project-category text-faded"> -->
+                                    <!-- Category -->
+                                <!-- </div> -->
+                                <!-- <div class="project-name"> -->
+                                    <!-- Project Name -->
+                                <!-- </div> -->
+                            <!-- </div> -->
+                        <!-- </div> -->
+                    <!-- </a> -->
+                <!-- </div> -->
+                <!-- <div class="col-lg-4 col-sm-6"> -->
+                    <!-- <a href="#" class="portfolio-box"> -->
+                        <!-- <img src="img/portfolio/4.jpg" class="img-responsive" alt=""> -->
+                        <!-- <div class="portfolio-box-caption"> -->
+                            <!-- <div class="portfolio-box-caption-content"> -->
+                                <!-- <div class="project-category text-faded"> -->
+                                    <!-- Category -->
+                                <!-- </div> -->
+                                <!-- <div class="project-name"> -->
+                                    <!-- Project Name -->
+                                <!-- </div> -->
+                            <!-- </div> -->
+                        <!-- </div> -->
+                    <!-- </a> -->
+                <!-- </div> -->
+                <!-- <div class="col-lg-4 col-sm-6"> -->
+                    <!-- <a href="#" class="portfolio-box"> -->
+                        <!-- <img src="img/portfolio/5.jpg" class="img-responsive" alt=""> -->
+                        <!-- <div class="portfolio-box-caption"> -->
+                            <!-- <div class="portfolio-box-caption-content"> -->
+                                <!-- <div class="project-category text-faded"> -->
+                                    <!-- Category -->
+                                <!-- </div> -->
+                                <!-- <div class="project-name"> -->
+                                    <!-- Project Name -->
+                                <!-- </div> -->
+                            <!-- </div> -->
+                        <!-- </div> -->
+                    <!-- </a> -->
+                <!-- </div> -->
+                <!-- <div class="col-lg-4 col-sm-6"> -->
+                    <!-- <a href="#" class="portfolio-box"> -->
+                        <!-- <img src="img/portfolio/6.jpg" class="img-responsive" alt=""> -->
+                        <!-- <div class="portfolio-box-caption"> -->
+                            <!-- <div class="portfolio-box-caption-content"> -->
+                                <!-- <div class="project-category text-faded"> -->
+                                    <!-- Category -->
+                                <!-- </div> -->
+                                <!-- <div class="project-name"> -->
+                                    <!-- Project Name -->
+                                <!-- </div> -->
+                            <!-- </div> -->
+                        <!-- </div> -->
+                    <!-- </a> -->
+                <!-- </div> -->
+            <!-- </div> -->
+        <!-- </div> -->
+    <!-- </section> -->
 
-      function showHelpScreen() {
-        pauseController.setValue(true);
-        $('#help-screen').addClass('open');
-        help = true;
-      }
+    <!-- <aside class="bg-dark"> -->
+        <!-- <div class="container text-center"> -->
+            <!-- <div class="call-to-action"> -->
+                <!-- <h2>Free Download at Start Bootstrap!</h2> -->
+                <!-- <a href="#" class="btn btn-default btn-xl wow tada">Download Now!</a> -->
+            <!-- </div> -->
+        <!-- </div> -->
+    <!-- </aside> -->
 
-      function hideHelpScreen() {
-        pauseController.setValue(false);
-        $('#help-screen').removeClass('open');
-        help = false;
-      }
+    <!-- <section id="contact"> -->
+        <!-- <div class="container"> -->
+            <!-- <div class="row"> -->
+                <!-- <div class="col-lg-8 col-lg-offset-2 text-center"> -->
+                    <!-- <h2 class="section-heading">Made with love by terry.ma</h2> -->
+                    <!-- <hr class="primary"> -->
+                    <!-- <p>Ready to start your next project with us? That's great! Give us a call or send us an email and we will get back to you as soon as possible!</p> -->
+                <!-- </div> -->
+                <!-- <div class="col-lg-4 col-lg-offset-2 text-center"> -->
+                    <!-- <i class="fa fa-phone fa-3x wow bounceIn"></i> -->
+                    <!-- <p>123-456-6789</p> -->
+                <!-- </div> -->
+                <!-- <div class="col-lg-4 text-center"> -->
+                    <!-- <i class="fa fa-envelope-o fa-3x wow bounceIn" data-wow-delay=".1s"></i> -->
+                    <!-- <p><a href="mailto:your-email@your-domain.com">feedback@startbootstrap.com</a></p> -->
+                <!-- </div> -->
+            <!-- </div> -->
+        <!-- </div> -->
+    <!-- </section> -->
 
-      menu = new Menu();
-      gui = new dat.GUI({
-        autoPlace: false,
-        preset: 'default',
-        load: preset
-      });
-      // Save menu
-      gui.remember(menu);
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
 
-      help = false;
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
 
-      $('#menu-container').append(gui.domElement);
+    <!-- Plugin JavaScript -->
+    <script src="js/jquery.easing.min.js"></script>
+    <script src="js/jquery.fittext.js"></script>
+    <script src="js/wow.min.js"></script>
 
-      // Initialize our plugin. No optional params for now
-      redditCast = new RedditCast();
-      console.log("reddit cast = ", redditCast);
+    <!-- Custom Theme JavaScript -->
+    <script src="js/creative.js"></script>
 
-      // Controller for changing subreddits
-      subController = gui.add(menu, 'sub').name('/r/').onChange(function(value) {
-        // searchSubreddit(value);
-      }).onFinishChange(function(value) {
-        console.log("Changing sub to ", value);
-        if (value === 'hot' || value === 'top') {
-          console.log("invalid subs");
-          return;
-        }
-        redditCast.changeOption('sub', value);
-      });
+</body>
 
-      // Controller for changing sort order of posts in a sub
-      sortController = gui.add(menu, 'sort', ['hot', 'new', 'top']).onFinishChange(function(value) {
-        console.log("Changing sort to ", value);
-        if (value === 'top') {
-          timeController.__li.style.display = "";
-        } else {
-          timeController.__li.style.display = "none";
-        }
-        redditCast.changeOption('sort', value);
-      });
-
-      // Controller for changing the time range when sort order if top
-      timeController = gui.add(menu, 'time', ['hour', 'day', 'week', 'month', 'year', 'all']).onFinishChange(function(value) {
-        console.log("Changing time to ", value);
-        redditCast.changeOption('time', value);
-      });
-      // Hide initially
-      timeController.__li.style.display = "none";
-
-      // Controller for changing the delay between slides
-      delayController = gui.add(menu, 'delay', 1, 20).step(1).onChange(function(value) {
-        redditCast.changeOption('delay', value);
-      }).onFinishChange(function(value) {
-        // onFinishChange does not work when we programmatically update the delay
-      });
-
-      // Controller for showing/hiding title
-      titleController = gui.add(menu, 'showTitle').name("show title").onFinishChange(function(value) {
-        console.log("Changing show title to ", value);
-        redditCast.changeOption('showTitle', value);
-      });
-
-      // Controller for cover mode
-      coverController = gui.add(menu, 'cover').onFinishChange(function(value) {
-        console.log("Changing cover to ", value);
-        redditCast.changeOption('cover', value);
-      });
-
-      // Controller for pausing/resuming the slideshow
-      pauseController = gui.add(menu, 'pause').onFinishChange(function(value) {
-        console.log("Changing pause to ", value);
-        redditCast.changeOption('pause', value);
-      });
-
-      // Controller for showing/hiding the progress bar
-      progressBarController = gui.add(menu, 'progress').name('progress bar').onFinishChange(function(value) {
-        console.log("Changing progress to ", value);
-        redditCast.changeOption('progress', value);
-      });
-
-      // Controller for showing the help screen
-      helpController = gui.add(menu, 'help').name('press ? for help');
-
-      // Set up keyboard shortcuts
-      Mousetrap.bind('h', function() {
-        if (!help) {
-          $(gui.domElement).toggle();
-        }
-      });
-      Mousetrap.bind('f', function() {
-        if (!help) {
-          toggleFullScreen();
-        }
-      });
-      Mousetrap.bind('space', function() {
-        if (!help) {
-          pauseController.setValue(!pauseController.getValue());
-        }
-      });
-      Mousetrap.bind('c', function() {
-        if (!help) {
-          coverController.setValue(!coverController.getValue());
-        }
-      });
-      Mousetrap.bind('z', function() {
-        if (!help) {
-          $(gui.domElement).hide();
-          coverController.setValue(true);
-          progressBarController.setValue(false);
-          fullScreen(true);
-        }
-      });
-      Mousetrap.bind('r', function() {
-        if (!help) {
-          $(gui.domElement).show();
-          coverController.setValue(false);
-          progressBarController.setValue(true);
-          fullScreen(false);
-        }
-      });
-      Mousetrap.bind('esc', function() {
-        if (help) {
-          hideHelpScreen();
-          return false;
-        }
-      });
-      Mousetrap.bind('?', function() {
-        if (help) {
-          hideHelpScreen();
-        } else {
-          showHelpScreen();
-        }
-      });
-      Mousetrap.bind('t', function() {
-        if (!help) {
-          titleController.setValue(!titleController.getValue());
-        }
-      });
-      Mousetrap.bind('p', function() {
-        if (!help) {
-          progressBarController.setValue(!progressBarController.getValue());
-        }
-      });
-      Mousetrap.bind('up', function() {
-        if (!help) {
-          delayController.setValue(delayController.getValue()+1);
-        }
-      });
-      Mousetrap.bind('down', function() {
-        if (!help) {
-          delayController.setValue(delayController.getValue()-1);
-        }
-      });
-      Mousetrap.bind('left', function() {
-        if (!help) {
-          redditCast.previous();
-        }
-      });
-      Mousetrap.bind('right', function() {
-        if (!help) {
-          redditCast.next();
-        }
-      });
-    });
-    </script>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-16954188-5', 'auto');
-      ga('send', 'pageview');
-
-    </script>
-  </body>
 </html>
