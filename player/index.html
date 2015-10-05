@@ -78,6 +78,9 @@
         this.cover = false;
         this.pause = false;
         this.progress = true;
+        this.fullscreen = function() {
+          fullScreen(true);
+        };
         this.help = function() {
           showHelpScreen();
         };
@@ -278,6 +281,9 @@
         console.log("Changing progress to ", value);
         redditCast.changeOption('progress', value);
       });
+
+      // Controller for going into fullscreen mode
+      fullscreenController = gui.add(menu, 'fullscreen').name('full screen mode');
 
       // Controller for showing the help screen
       helpController = gui.add(menu, 'help').name('press ? for help');
