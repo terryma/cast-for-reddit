@@ -7,10 +7,18 @@
     <title>Cast for Reddit</title>
   </head>
   <body style="width:100%; height:100%; margin:0; font-family:'Oswald', sans-serif; font-size:5vh; display:table">
-    <div class="overlay-title"><span id="overlay-title" style="display:none"></span></div>
-    <div id="overlay" class="overlay-scale">
-      <div id="overlay-content" class="overlay-content">
-        <span id="overlay-text">Loading from <span id="subreddit" style="color:#1ABC9C"></span></span>
+    <div id="title-cover" class="title-cover" style="display:none">
+      <span id="title-cover-text"></span>
+      <a target="_blank" id="title-cover-link">
+        [&#8679;
+        <span id="title-cover-score"></span>
+        <img src="../images/reddit-alien.svg" class="reddit-logo">
+        ]
+      </a>
+    </div>
+    <div id="loading-screen" class="overlay overlay-scale">
+      <div id="loading-screen-wrapper" class="overlay-content">
+        <span>Loading from <span id="subreddit" class="attention"></span></span>
         <div class="spinner" style="display:inline-block">
           <div class="rect1"></div>
           <div class="rect2"></div>
@@ -20,10 +28,18 @@
         </div>
       </div>
     </div>
-    <div id="title-wrapper" style="display:table-row; width:100%; background-color:black; color:white;">
-      <div id="title" style="display:table-cell; vertical-align: middle; height:10%; text-align:center; padding-left:2%; padding-right:2%"></div>
+    <div id="title-wrapper">
+      <div id="title-top">
+        <span id="title-top-text"></span>
+        <a target="_blank" id="title-top-link">
+          [&#8679;
+          <span id="title-top-score"></span>
+          <img src="../images/reddit-alien.svg" class="reddit-logo">
+          ]
+        </a>
+      </div>
     </div>
-    <div style="display:table-row; height:100%; background-color:black">
+    <div style="display:table-row; height:100%; background-color:#1D1D1D;">
       <div style="position:relative;height:100%;width:100%">
         <div id="slideshow" style="top:0;bottom:0;left:0;right:0;position:absolute;height:auto"></div>
       </div>
@@ -84,14 +100,22 @@
         // initialize the CastReceiverManager with an application status message
         window.castReceiverManager.start({statusText: "Application is starting"});
         console.log('Receiver Manager started');
+
+        // Initialize our plugin. No optional params for now
+        redditCast = new RedditCast();
+        console.log("reddit cast = ", redditCast);
       };
 
       function processMessage(message) {
         console.log("processing message: ", message);
         msg = message;
-        message = JSON.parse(message);
-        changeOption(message.option, message.value);
-        window.castReceiverManager.setApplicationState(message);
+        try {
+          message = JSON.parse(message);
+          changeOption(message.option, message.value);
+          window.castReceiverManager.setApplicationState(message);
+        } catch (e) {
+          // console.error("Caught exception", e);
+        }
       };
 
       function showImage(url) {
