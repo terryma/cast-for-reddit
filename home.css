@@ -1,0 +1,13 @@
+.main-logo {
+  background-image: url("Reddit_logo.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  height: 110px;
+  background-size: contain;
+  width: 330px;
+  vertical-align: bottom;
+  text-indent: 100%;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
