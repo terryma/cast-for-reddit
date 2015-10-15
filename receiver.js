@@ -250,6 +250,8 @@
           if (this.slice.empty) {
             console.warn("Nothing more to load! Going back to the beginning");
             if (this.initialized) {
+              // This first time we reach the end, we simply jump back to the
+              // beginning of the slide show for a smooth experience
               this.ss.vegas('jump', 0)
             }
             return;
@@ -365,7 +367,14 @@
                 self.updateTitle(slideSettings.title, slideSettings.data.permalink, slideSettings.data.score);
                 if (self.slides.length - index -1 <= self.bufferSize && !self.loadingSlice) {
                   self.loadingSlice = true;
-                  self.slice.next().then(self.handleSlice.bind(self));
+                  if (self.slice.empty) {
+                    console.log("Slice is empty, going back to beginning...");
+                    // The second time we reach the end again, if it's empty, we
+                    // reload the entire stream
+                    self.slice.start().then(self.handleSlice.bind(self));
+                  } else {
+                    self.slice.next().then(self.handleSlice.bind(self));
+                  }
                 }
               });
               self.ss.on('vegasplay', function(e, index, slideSettings) {
