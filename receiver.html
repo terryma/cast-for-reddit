@@ -113,7 +113,7 @@
         msg = message;
         try {
           message = JSON.parse(message);
-          changeOption(message.option, message.value);
+          redditCast.changeOption(message.option, message.value);
           window.castReceiverManager.setApplicationState(message);
         } catch (e) {
           // console.error("Caught exception", e);
